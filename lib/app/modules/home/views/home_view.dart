@@ -1,3 +1,4 @@
+import 'package:avatar_glow/avatar_glow.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
@@ -9,19 +10,18 @@ class HomeView extends GetView<HomeController> {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     return Scaffold(
-      floatingActionButton: GetBuilder(
+      /*floatingActionButton: GetBuilder(
         builder: (GetxController c) => FloatingActionButton(
           onPressed:
               // If not yet listening for speech start, otherwise stop
-              hCtrl.speechToText.isNotListening ?? false
+              hCtrl.speechToText.isNotListening
                   ? hCtrl.startListening
                   : hCtrl.stopListening,
           tooltip: 'Listen',
-          child: Icon(hCtrl.speechToText?.isNotListening ?? false
-              ? Icons.mic_off
-              : Icons.mic),
+          child: Icon(
+              hCtrl.speechToText.isNotListening ? Icons.mic_off : Icons.mic),
         ),
-      ),
+      ),*/
       appBar: AppBar(
         leading: Container(),
         toolbarHeight: 70,
@@ -77,12 +77,25 @@ class HomeView extends GetView<HomeController> {
 */
           Container(
             margin: const EdgeInsets.only(right: 20),
-            child: IconButton(
-              icon: const Icon(Icons.mic_sharp),
-              iconSize: 30,
-              onPressed: () {},
-              tooltip: "Microphone",
-              color: theme.colorScheme.secondary,
+            child: AvatarGlow(
+              endRadius: 30,
+              animate: hCtrl.speechToText.isListening,
+              duration: const Duration(milliseconds: 2000),
+              glowColor: Colors.white,
+              repeat: true,
+              showTwoGlows: true,
+              repeatPauseDuration: const Duration(milliseconds: 100),
+              child: IconButton(
+                icon: const Icon(Icons.mic),
+                iconSize: 30,
+                onPressed: () {
+                  hCtrl.speechToText.isNotListening
+                      ? hCtrl.startListening()
+                      : hCtrl.stopListening();
+                },
+                tooltip: "Microphone",
+                color: theme.colorScheme.secondary,
+              ),
             ),
           ),
           Container(

@@ -7,12 +7,12 @@ import 'package:speech_to_text/speech_to_text.dart';
 class HomeController extends GetxController {
   //TODO: Implement HomeController
   RxInt tabIndex = 0.obs;
-  final SpeechToText _speechToText = SpeechToText();
+  final SpeechToText speechToText = SpeechToText();
   //GETTER TO RETURN INSTANCE OF SPEECH TO TEXT.
-  SpeechToText get speechToText => _speechToText;
-  //FUNCTION GETTERS.
+  //SpeechToText get speechToText => _speechToText;
+  /*//FUNCTION GETTERS.
   get startListening => _startListening();
-  get stopListening => _stopListening();
+  get stopListening => _stopListening();*/
 
   RxBool speechEnabled = false.obs;
   RxString lastWords = ''.obs;
@@ -25,16 +25,16 @@ class HomeController extends GetxController {
 
   /// This has to happen only once per app
   void _initSpeech() async {
-    speechEnabled(await _speechToText.initialize());
+    speechEnabled(await speechToText.initialize());
     print('SPEECH ENABLED BOOL : $speechEnabled');
     //setState(() {});
     update();
   }
 
   /// Each time to start a speech recognition session
-  void _startListening() async {
-    await _speechToText.listen(
-      onResult: _onSpeechResult,
+  void startListening() async {
+    await speechToText.listen(
+      onResult: onSpeechResult,
       pauseFor: const Duration(seconds: 5),
       listenFor: const Duration(seconds: 20),
       //cancelOnError: ,
@@ -46,15 +46,15 @@ class HomeController extends GetxController {
   /// Note that there are also timeouts that each platform enforces
   /// and the SpeechToText plugin supports setting timeouts on the
   /// listen method.
-  void _stopListening() async {
-    await _speechToText.stop();
+  void stopListening() async {
+    await speechToText.stop();
     // setState(() {});
     update();
   }
 
   /// This is the callback that the SpeechToText plugin calls when
   /// the platform returns recognized words.
-  void _onSpeechResult(SpeechRecognitionResult result) {
+  void onSpeechResult(SpeechRecognitionResult result) {
     lastWords(result.recognizedWords);
     update();
     print('LIST OF WORDS: ${result.alternates}');

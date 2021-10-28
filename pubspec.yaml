@@ -14,6 +14,7 @@ dependencies:
   get_cli: ^1.6.0
   get: 4.3.8
   cached_network_image: ^3.1.0
+  avatar_glow: ^2.0.1
   flutter:
     sdk: flutter
   r_dart_library: 0.4.0-nullsafety.0

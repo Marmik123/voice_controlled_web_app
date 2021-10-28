@@ -1,14 +1,27 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:voicewebapp/app/modules/home/views/home_content_view.dart';
 
 import '../controllers/home_controller.dart';
 
 class HomeView extends GetView<HomeController> {
   @override
+  HomeController hCtrl = Get.put(HomeController());
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     return Scaffold(
+      floatingActionButton: GetBuilder(
+        builder: (GetxController c) => FloatingActionButton(
+          onPressed:
+              // If not yet listening for speech start, otherwise stop
+              hCtrl.speechToText.isNotListening ?? false
+                  ? hCtrl.startListening
+                  : hCtrl.stopListening,
+          tooltip: 'Listen',
+          child: Icon(hCtrl.speechToText?.isNotListening ?? false
+              ? Icons.mic_off
+              : Icons.mic),
+        ),
+      ),
       appBar: AppBar(
         leading: Container(),
         toolbarHeight: 70,
@@ -174,11 +187,25 @@ class HomeView extends GetView<HomeController> {
                   ),
                 )),
             const VerticalDivider(thickness: 1, width: 3),
-            Obx(() => Expanded(
-                  child: controller.tabIndex() == 0
-                      ? HomeContentView()
-                      : Container(),
-                )),
+            Obx(() => controller.tabIndex() == 0
+                ? Expanded(
+                    child: Container(
+                      padding: EdgeInsets.all(16),
+                      child: Text(
+                        // If listening is active show the recognized words
+                        controller.speechToText.isListening
+                            ? controller.lastWords()
+                            // If listening isn't active but could be tell the user
+                            // how to start it, otherwise indicate that speech
+                            // recognition is not yet ready or not supported on
+                            // the target device
+                            : controller.speechEnabled()
+                                ? 'Tap the microphone to start listening...'
+                                : 'Speech not available',
+                      ),
+                    ),
+                  )
+                : Container()),
           ],
         ),
       ),

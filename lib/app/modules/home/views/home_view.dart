@@ -78,13 +78,13 @@ class HomeView extends GetView<HomeController> {
           Container(
             margin: const EdgeInsets.only(right: 20),
             child: AvatarGlow(
-              endRadius: 30,
-              animate: hCtrl.speechToText.isListening,
+              endRadius: 100,
+              animate: false,
               duration: const Duration(milliseconds: 2000),
               glowColor: Colors.white,
               repeat: true,
               showTwoGlows: true,
-              repeatPauseDuration: const Duration(milliseconds: 100),
+              repeatPauseDuration: const Duration(milliseconds: 50),
               child: IconButton(
                 icon: const Icon(Icons.mic),
                 iconSize: 30,

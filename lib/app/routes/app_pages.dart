@@ -1,18 +1,19 @@
 import 'package:get/get.dart';
-
 import 'package:voicewebapp/app/modules/about_us/bindings/about_us_binding.dart';
 import 'package:voicewebapp/app/modules/about_us/views/about_us_view.dart';
 import 'package:voicewebapp/app/modules/home/bindings/home_binding.dart';
 import 'package:voicewebapp/app/modules/home/views/home_view.dart';
 import 'package:voicewebapp/app/modules/login_screen/bindings/login_screen_binding.dart';
 import 'package:voicewebapp/app/modules/login_screen/views/login_screen_view.dart';
+import 'package:voicewebapp/app/modules/sign_in/bindings/sign_in_binding.dart';
+import 'package:voicewebapp/app/modules/sign_in/views/sign_in_view.dart';
 
 part 'app_routes.dart';
 
 class AppPages {
   AppPages._();
 
-  static const INITIAL = Routes.HOME;
+  static const INITIAL = Routes.SIGN_IN;
 
   static final routes = [
     GetPage(
@@ -29,6 +30,11 @@ class AppPages {
       name: _Paths.LOGIN_SCREEN,
       page: () => LoginScreenView(),
       binding: LoginScreenBinding(),
+    ),
+    GetPage(
+      name: _Paths.SIGN_IN,
+      page: () => SignInView(),
+      binding: SignInBinding(),
     ),
   ];
 }

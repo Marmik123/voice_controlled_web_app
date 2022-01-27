@@ -93,10 +93,15 @@ class AssetResource {
 class _R_Image_AssetResource {
   const _R_Image_AssetResource();
 
-  /// asset: lib/assets/images/fruit.jpg
+  /// asset: assets/images/fruit.jpg
   // ignore: non_constant_identifier_names
   final fruit_jpg =
-      const AssetResource("assets/images/fruit.jpg", packageName: R.package);
+      const AssetResource("assets/images/fruit.jpg", packageName: null);
+
+  /// asset: assets/images/voice_c.png
+  // ignore: non_constant_identifier_names
+  final voice_c =
+      const AssetResource("assets/images/voice_c.png", packageName: null);
 }
 
 // ignore: camel_case_types
@@ -116,10 +121,16 @@ class _R_Image {
 
   final asset = const _R_Image_AssetResource();
 
-  /// asset: lib/assets/images/fruit.jpg
+  /// asset: assets/images/fruit.jpg
   // ignore: non_constant_identifier_names
   AssetImage fruit_jpg() {
     return AssetImage(asset.fruit_jpg.keyName);
+  }
+
+  /// asset: assets/images/voice_c.png
+  // ignore: non_constant_identifier_names
+  AssetImage voice_c() {
+    return AssetImage(asset.voice_c.keyName);
   }
 }
 

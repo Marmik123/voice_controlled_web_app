@@ -1,12 +1,25 @@
 import 'dart:developer';
 
+import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:speech_to_text/speech_recognition_result.dart';
 import 'package:speech_to_text/speech_to_text.dart';
 
 class HomeController extends GetxController {
-  //TODO: Implement HomeController
   RxInt tabIndex = 0.obs;
+  Map<Icon, String> appBarItems = {
+    const Icon(Icons.home): 'Home',
+    const Icon(Icons.add_shopping_cart_outlined): 'Cart',
+    const Icon(Icons.shopping_bag): 'Shop',
+    const Icon(Icons.contact_mail): 'Contact',
+  };
+  Map<Icon, String> navigationRail = {
+    const Icon(Icons.home): 'Beverages',
+    const Icon(Icons.add_shopping_cart_outlined): 'Snacks and Foods',
+    const Icon(Icons.shopping_bag): 'Fruits & Vegetables',
+    const Icon(Icons.contact_mail): 'Food Grains',
+  };
+
   final SpeechToText speechToText = SpeechToText();
   //GETTER TO RETURN INSTANCE OF SPEECH TO TEXT.
   //SpeechToText get speechToText => _speechToText;

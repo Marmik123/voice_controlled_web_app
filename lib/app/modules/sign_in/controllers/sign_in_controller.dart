@@ -1,14 +1,15 @@
+import 'dart:developer';
+
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:voicewebapp/app/modules/home/views/home_view.dart';
 import 'package:voicewebapp/components/snack_bar.dart';
 import 'package:voicewebapp/utils/size_config.dart';
 
 class SignInController extends GetxController {
-  //TODO: Implement SignInController
-
   final count = 0.obs;
   RxBool hidePassword = false.obs;
   RxBool newRegisteration = false.obs;
@@ -60,7 +61,6 @@ class SignInController extends GetxController {
         return 'Error in register';
       }
     } on FirebaseAuthException catch (e) {
-      // TODO
       print('${e.code}');
       if (e.code == 'email-already-in-use') {
         appSnackbar(
@@ -112,11 +112,12 @@ class SignInController extends GetxController {
           message: 'Successfully logged in, User UID: ${user.uid}',
           snackbarState: SnackbarState.success,
         );
+        Get.to(() => HomeView());
         // return 'Successfully logged in, User UID: ${user.uid}';
       }
     } on FirebaseAuthException catch (e) {
       isLoading(false);
-      print(e.code.toString());
+      log(e.code);
       if (e.code == 'user-not-found') {
         appSnackbar(
           message: 'User Not Found,Please register first',

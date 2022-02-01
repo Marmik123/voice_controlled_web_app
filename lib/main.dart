@@ -1,5 +1,6 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:voicewebapp/utils/size_config.dart';
 
@@ -18,15 +19,28 @@ void main() async {
       measurementId: "G-W1XHBN4KTC",
     ),
   );
+
   //Getting Viewport dimensions. (Assigning device height and width).
   SizeConfig.init();
-  runApp(
-    GetMaterialApp(
-      title: "Voice Control",
-      debugShowCheckedModeBanner: false,
-      initialRoute: AppPages.INITIAL,
-      getPages: AppPages.routes,
-      theme: ThemeData.light(),
-    ),
-  );
+  runApp(const MainApp());
+}
+
+class MainApp extends StatelessWidget {
+  const MainApp({Key? key}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return ScreenUtilInit(
+        designSize: const Size(1748, 2840),
+        builder: () {
+          // ScreenUtil.setContext(context);
+          return GetMaterialApp(
+            title: "Voice Control",
+            debugShowCheckedModeBanner: false,
+            initialRoute: AppPages.INITIAL,
+            getPages: AppPages.routes,
+            theme: ThemeData.light(),
+          );
+        });
+  }
 }

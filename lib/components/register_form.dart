@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:voicewebapp/components/sized_box.dart';
 import 'package:voicewebapp/utils/app_colors.dart';
-import 'package:voicewebapp/utils/size_config.dart';
 
 Widget form({
   required GlobalKey formKey,
@@ -16,20 +16,21 @@ Widget form({
     key: formKey,
     child: Center(
       child: Column(
-        mainAxisSize: MainAxisSize.min,
+        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
         children: [
           Text(
-            "VOICE CONTROLLED WEB APP",
+            "VOCAPP",
             style: TextStyle(
               color: Get.isDarkMode ? AppColors.kFBEEF4 : AppColors.k00474E,
-              fontSize: SizeConfig.blockSizeHorizontal > 00 ? 16 : 10,
+              fontSize: 120.sp,
               fontWeight: FontWeight.w700,
             ),
+            // textAlign: TextAlign.left,
           ),
-          h(height: 30),
+          h(height: 150.sp),
           SizedBox(
-            width: SizeConfig.screenWidth / 5,
-            height: SizeConfig.screenHeight / 12,
+            width: 550.w,
+            height: 330.h,
             child: TextFormField(
               cursorColor: Colors.black,
               controller: emailTxtCtrl,
@@ -61,10 +62,10 @@ Widget form({
               ),
             ),
           ),
-          h(height: 20),
+          // h(height: 20),
           SizedBox(
-            width: SizeConfig.screenWidth / 3,
-            height: SizeConfig.screenHeight / 12,
+            width: 550.w,
+            height: 330.h,
             child: TextFormField(
               cursorColor: Colors.black,
               controller: passwordCtrl,

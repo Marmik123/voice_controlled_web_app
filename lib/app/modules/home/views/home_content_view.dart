@@ -15,7 +15,7 @@ class HomeContentView extends GetView {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
-              'Categories',
+              'Snacks',
               style: TextStyle(
                 color: theme.colorScheme.secondary,
                 fontSize: 30,
@@ -37,6 +37,7 @@ class HomeContentView extends GetView {
                 shrinkWrap: true,
                 itemCount: 25,
                 scrollDirection: Axis.horizontal,
+                //TODO: Integrate Snacks category below.
                 itemBuilder: (context, itemIndex) => Container(
                   decoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(25),

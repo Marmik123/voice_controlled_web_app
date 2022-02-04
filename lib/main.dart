@@ -37,7 +37,7 @@ class MainApp extends StatelessWidget {
           return GetMaterialApp(
             title: "Voice Control",
             debugShowCheckedModeBanner: false,
-            initialRoute: AppPages.INITIAL,
+            initialRoute: Routes.SIGN_IN,
             getPages: AppPages.routes,
             theme: ThemeData.light(),
           );

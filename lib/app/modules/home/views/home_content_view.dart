@@ -1,9 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:voicewebapp/app/modules/home/controllers/home_controller.dart';
+import 'package:voicewebapp/components/circular_loader.dart';
+import 'package:voicewebapp/components/product_card.dart';
 import 'package:voicewebapp/components/sized_box.dart';
-import 'package:voicewebapp/r.g.dart';
+import 'package:voicewebapp/controller/firebase_helper.dart';
 
 class HomeContentView extends GetView {
+  FirebaseHelper firebaseHelper = FirebaseHelper();
+  HomeController hCtrl = Get.find<HomeController>();
+
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
@@ -14,54 +20,46 @@ class HomeContentView extends GetView {
           //  mainAxisAlignment: MainAxisAlignment.start,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text(
-              'Snacks',
-              style: TextStyle(
-                color: theme.colorScheme.secondary,
-                fontSize: 30,
-                fontWeight: FontWeight.w400,
+            GestureDetector(
+              onTap: () {
+                firebaseHelper.seeding();
+              },
+              child: Text(
+                'Snacks',
+                style: TextStyle(
+                  color: theme.colorScheme.secondary,
+                  fontSize: 30,
+                  fontWeight: FontWeight.w400,
+                ),
+                softWrap: true,
+                overflow: TextOverflow.ellipsis,
               ),
-              softWrap: true,
-              overflow: TextOverflow.ellipsis,
             ),
             h(height: 30),
             Expanded(
-              child: GridView.builder(
-                gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                  crossAxisCount: 3,
-                  childAspectRatio: 2 / 3,
-                  mainAxisSpacing: 20,
-                  crossAxisSpacing: 10,
-                ),
-                physics: const BouncingScrollPhysics(),
-                shrinkWrap: true,
-                itemCount: 25,
-                scrollDirection: Axis.horizontal,
-                //TODO: Integrate Snacks category below.
-                itemBuilder: (context, itemIndex) => Container(
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(25),
-                    image: DecorationImage(
-                      fit: BoxFit.fill,
-                      scale: 20,
-                      image: AssetImage(R.image.asset.fruit_jpg.assetName),
-                    ),
-                    gradient: LinearGradient(
-                      colors: [
-                        theme.colorScheme.secondary,
-                        theme.primaryColorDark
-                      ],
-                    ),
-                  ),
-                  child: Center(
-                      child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    children: [
-                      Text('Vegetable'),
-                    ],
-                  )),
-                ),
-              ),
+              child: Obx(() => hCtrl.isLoading()
+                  ? Center(child: buildLoader())
+                  : GridView.builder(
+                      gridDelegate:
+                          const SliverGridDelegateWithFixedCrossAxisCount(
+                        crossAxisCount: 2,
+                        childAspectRatio: 1.5,
+                        mainAxisSpacing: 35,
+                        crossAxisSpacing: 25,
+                      ),
+                      physics: const ClampingScrollPhysics(),
+                      shrinkWrap: true,
+                      itemCount: hCtrl.products?.length ?? 0,
+                      scrollDirection: Axis.horizontal,
+                      //TODO: ROMIL's TASK Integrate Snacks category below.
+                      itemBuilder: (context, itemIndex) => ProductCard(
+                        name: hCtrl.products?[itemIndex].name ?? '-',
+                        imgUrl: hCtrl.products?[itemIndex].urlImage ??
+                            'https://picsum.photos/200',
+                        metric: hCtrl.products?[itemIndex].metric ?? '-',
+                        price: hCtrl.products?[itemIndex].price ?? 0,
+                      ),
+                    )),
             )
           ],
         ),

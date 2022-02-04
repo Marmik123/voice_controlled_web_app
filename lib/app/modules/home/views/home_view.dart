@@ -2,13 +2,19 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:voicewebapp/app/modules/home/views/home_content_view.dart';
+import 'package:voicewebapp/app/routes/app_pages.dart';
 import 'package:voicewebapp/components/appBar_Component.dart';
+import 'package:voicewebapp/utils/material_prop_ext.dart';
 
 import '../controllers/home_controller.dart';
 
 class HomeView extends GetView<HomeController> {
   @override
   HomeController hCtrl = Get.put(HomeController());
+
+  HomeView({Key? key}) : super(key: key);
+
+  @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     return Scaffold(
@@ -30,12 +36,18 @@ class HomeView extends GetView<HomeController> {
         leadingWidth: 25,
         backgroundColor: Theme.of(context).bottomAppBarColor,
         elevation: 5,
-        title: Text(
-          "Voice Controlled Web App",
-          style: TextStyle(
-            color: theme.colorScheme.secondary,
-            fontSize: 120.sp,
-            fontWeight: FontWeight.w500,
+        title: GestureDetector(
+          onTap: () {
+            Get.toNamed(Routes.SIGN_IN);
+            // Get.back();
+          },
+          child: Text(
+            "Voice Controlled Web App",
+            style: TextStyle(
+              color: theme.colorScheme.secondary,
+              fontSize: 120.sp,
+              fontWeight: FontWeight.w500,
+            ),
           ),
         ),
         /*Container(
@@ -83,7 +95,6 @@ class HomeView extends GetView<HomeController> {
                     iconSize: 130.r,
                     color: Colors.green,
                     onPressed: () {},
-
                     // tooltip: "Home",
                   ),
                   belowText: '${appBarItem.value}', //value=appBarItem Text.
@@ -97,18 +108,45 @@ class HomeView extends GetView<HomeController> {
           children: [
             Obx(() => NavigationRail(
                   extended: false,
-                  minExtendedWidth: 150,
+                  minExtendedWidth: 200.w,
                   onDestinationSelected: (int index) {
                     controller.tabIndex(index);
                     print('###selected tab index $index');
                   },
-                  minWidth: 60,
+                  minWidth: 100.w,
                   groupAlignment: 0,
                   backgroundColor: Colors.grey[280],
-                  elevation: 25,
+                  elevation: 15,
                   labelType: NavigationRailLabelType.all,
+                  leading: SizedBox(
+                    height: 0.1.sw,
+                    width: 0.4.sh,
+                    child: Drawer(
+                      child: TextButton(
+                        onPressed: () {
+                          // hCtrl.drawerExpanded(!hCtrl.drawerExpanded());
+                        },
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                          children: [
+                            const Icon(Icons.restaurant_menu),
+                            Text(
+                              'Categories',
+                              style: TextStyle(
+                                fontSize: 75.sp,
+                                color: theme.primaryColor,
+                              ),
+                            )
+                          ],
+                        ),
+                        style: ButtonStyle(
+                          padding: EdgeInsets.only(left: 20.w, right: 20.w).msp,
+                        ),
+                      ),
+                    ),
+                  ),
                   destinations: [
-                    //TODO: ROMIL'TASK =>Already Made a Component for below widget just want you to add selectedIcon property inside controller naviagtionRailComponent and made it in a similar way like appBarComponent using .map().toList().
+                    //TODO: ROMIL's TASK =>Already Made a Component for below widget just want you to add selectedIcon property inside controller naviagtionRailComponent and made it in a similar way like appBarComponent using .map().toList().
                     NavigationRailDestination(
                       icon: Icon(
                         Icons.home_filled,
@@ -154,7 +192,7 @@ class HomeView extends GetView<HomeController> {
                         Icons.supervised_user_circle_sharp,
                         color: theme.disabledColor,
                       ),
-                      label: Text(
+                      label: const Text(
                         "FoodGrains",
                       ),
                       selectedIcon: Icon(
@@ -172,7 +210,7 @@ class HomeView extends GetView<HomeController> {
             Obx(() => controller.tabIndex() == 0
                 ? Expanded(
                     child: Container(
-                      padding: EdgeInsets.all(16),
+                      padding: const EdgeInsets.all(16),
                       child: HomeContentView()
                       /*Text(
                         // If listening is active show the recognized words

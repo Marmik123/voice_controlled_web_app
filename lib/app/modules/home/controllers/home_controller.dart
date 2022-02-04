@@ -4,6 +4,8 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:speech_to_text/speech_recognition_result.dart';
 import 'package:speech_to_text/speech_to_text.dart';
+import 'package:voicewebapp/app/data/remote/provider/models/product.dart';
+import 'package:voicewebapp/controller/firebase_helper.dart';
 
 class HomeController extends GetxController {
   RxInt tabIndex = 0.obs;
@@ -28,12 +30,20 @@ class HomeController extends GetxController {
   get stopListening => _stopListening();*/
 
   RxBool speechEnabled = false.obs;
+  // RxBool addToCartButton = false.obs;
   RxString lastWords = ''.obs;
+  // RxInt productQuantity = 1.obs;
   final count = 0.obs;
+  FirebaseHelper firebaseHelper = FirebaseHelper();
+  List<Product>? products = [];
+  RxBool isLoading = false.obs;
+  RxBool drawerExpanded = false.obs;
+
   @override
   void onInit() {
     super.onInit();
     _initSpeech(); // FUNCTION TO CALL ONLY ONCE AN APP IS INITIALIZED.
+    getProductsData();
   }
 
   /// This has to happen only once per app
@@ -41,7 +51,15 @@ class HomeController extends GetxController {
     speechEnabled(await speechToText.initialize());
     print('SPEECH ENABLED BOOL : $speechEnabled');
     //setState(() {});
+    // getProducts();
     update();
+  }
+
+  Future<void> getProductsData() async {
+    isLoading(true);
+    products = await firebaseHelper.getProducts();
+    print(products);
+    isLoading(false);
   }
 
   /// Each time to start a speech recognition session

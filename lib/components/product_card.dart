@@ -77,125 +77,128 @@ class _ProductCardState extends State<ProductCard> {
           ),
           /*hCtrl.addToCartButton()
               ?*/
-          if (cardStatus) Expanded(
-                  child: Row(
-                    mainAxisSize: MainAxisSize.max,
-                    mainAxisAlignment: MainAxisAlignment.spaceAround,
-                    children: [
-                      IconButton(
-                          hoverColor: Colors.white,
-                          alignment: Alignment.center,
-                          icon: Icon(
-                            Icons.remove_circle,
-                            size: 35.w,
-                            color: quantity == 1 ? Colors.grey : Colors.white,
-                          ),
-                          onPressed: () {
-                            if (quantity > 1) {
-                              // quantity--
-                              setState(() {
-                                quantity--;
-                              });
-                            } else {
-                              Get.rawSnackbar(
-                                message: 'Minimum order quantity is 1',
-                                icon: const Icon(Icons.warning),
-                                backgroundColor: Colors.orangeAccent,
-                                snackPosition: SnackPosition.BOTTOM,
-                                overlayBlur: 1,
-                                borderRadius: 10,
-                                snackStyle: SnackStyle.FLOATING,
-                                margin: const EdgeInsets.all(10),
-                              );
-                            }
-                          }),
-                      Container(
-                        padding: const EdgeInsets.all(8),
-                        decoration: BoxDecoration(
-                          border: Border.all(
-                            color: Colors.grey,
-                            width: 1,
-                          ),
-                        ),
-                        child: RichText(
-                          overflow: TextOverflow.ellipsis,
-                          maxLines: 1,
-                          text: TextSpan(
-                            children: [
-                              TextSpan(
-                                text: '${quantity}',
-                                style: TextStyle(
-                                  fontSize: 65.sp,
-                                ),
-                              ),
-                              TextSpan(
-                                text: ' ${widget.metric}',
-                                style: GoogleFonts.sourceSansPro(
-                                  fontWeight: FontWeight.bold,
-                                  fontSize: 45.sp,
-                                ),
-                              ),
-                            ],
-                            style: GoogleFonts.sourceSansPro(
-                              color: const Color(0xff000000),
-                              fontWeight: FontWeight.bold,
-                              fontSize: 35.sp,
+          if (cardStatus)
+            Expanded(
+              child: Row(
+                mainAxisSize: MainAxisSize.max,
+                mainAxisAlignment: MainAxisAlignment.spaceAround,
+                children: [
+                  IconButton(
+                      hoverColor: Colors.white,
+                      alignment: Alignment.center,
+                      icon: Icon(
+                        Icons.remove_circle,
+                        size: 35.w,
+                        color: quantity == 1 ? Colors.grey : Colors.white,
+                      ),
+                      onPressed: () {
+                        if (quantity > 1) {
+                          // quantity--
+                          setState(() {
+                            quantity--;
+                          });
+                        } else {
+                          Get.rawSnackbar(
+                            message: 'Minimum order quantity is 1',
+                            icon: const Icon(Icons.warning),
+                            backgroundColor: Colors.orangeAccent,
+                            snackPosition: SnackPosition.BOTTOM,
+                            overlayBlur: 1,
+                            borderRadius: 10,
+                            snackStyle: SnackStyle.FLOATING,
+                            margin: const EdgeInsets.all(10),
+                          );
+                        }
+                      }),
+                  Container(
+                    padding: const EdgeInsets.all(8),
+                    decoration: BoxDecoration(
+                      border: Border.all(
+                        color: Colors.grey,
+                        width: 1,
+                      ),
+                    ),
+                    child: RichText(
+                      overflow: TextOverflow.ellipsis,
+                      maxLines: 1,
+                      text: TextSpan(
+                        children: [
+                          TextSpan(
+                            text: '${quantity}',
+                            style: TextStyle(
+                              fontSize: 65.sp,
                             ),
                           ),
-                          textAlign: TextAlign.center,
+                          TextSpan(
+                            text: ' ${widget.metric}',
+                            style: GoogleFonts.sourceSansPro(
+                              fontWeight: FontWeight.bold,
+                              fontSize: 45.sp,
+                            ),
+                          ),
+                        ],
+                        style: GoogleFonts.sourceSansPro(
+                          color: const Color(0xff000000),
+                          fontWeight: FontWeight.bold,
+                          fontSize: 35.sp,
                         ),
                       ),
+                      textAlign: TextAlign.center,
+                    ),
+                  ),
+                  IconButton(
+                    alignment: Alignment.center,
+                    icon: Icon(
+                      Icons.add_circle,
+                      size: 35.w,
+                      color: AppColors.kffffff,
+                    ),
+                    onPressed: () {
+                      //quantity
+                      // hCtrl.productQuantity(quantity + 1);
+                      setState(() {
+                        quantity++;
+                      });
+                    },
+                  ),
+                ],
+              ),
+            )
+          else
+            Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: ElevatedButton(
+                onPressed: () {
+                  setState(() {
+                    cardStatus = true;
+                  });
+                  // hCtrl.addToCartButton(true);
+                },
+                style: ButtonStyle(
+                  elevation: 10.0.msp,
+                  padding: const EdgeInsets.all(8).msp,
+                ),
+                child: FittedBox(
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                    children: [
+                      const Text('Add to cart'),
                       IconButton(
                         alignment: Alignment.center,
                         icon: Icon(
                           Icons.add_circle,
                           size: 35.w,
-                          color: AppColors.kffffff,
+                          color: Colors.white,
                         ),
                         onPressed: () {
-                          //quantity
-                          // hCtrl.productQuantity(quantity + 1);
-                          setState(() {
-                            quantity++;
-                          });
+                          //quantity++
                         },
-                      ),
+                      )
                     ],
                   ),
-                ) else Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: ElevatedButton(
-                    onPressed: () {
-                      setState(() {
-                        cardStatus = true;
-                      });
-                      // hCtrl.addToCartButton(true);
-                    },
-                    style: ButtonStyle(
-                      elevation: 10.0.msp,
-                      padding: const EdgeInsets.all(8).msp,
-                    ),
-                    child: FittedBox(
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                        children: [
-                          const Text('Add to cart'),
-                          IconButton(
-                            alignment: Alignment.center,
-                            icon: Icon(
-                              Icons.add_circle,
-                              size: 35.w,
-                              color: Colors.white,
-                            ),
-                            onPressed: () {
-                              //quantity++
-                            },
-                          )
-                        ],
-                      ),
-                    ),
-                  ),
                 ),
+              ),
+            ),
           h(height: 25.h),
         ],
       ),

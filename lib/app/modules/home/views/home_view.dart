@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:voicewebapp/app/modules/home/views/home_content_view.dart';
-import 'package:voicewebapp/app/routes/app_pages.dart';
 import 'package:voicewebapp/components/appBar_Component.dart';
 import 'package:voicewebapp/utils/material_prop_ext.dart';
 
@@ -38,7 +37,7 @@ class HomeView extends GetView<HomeController> {
         elevation: 5,
         title: GestureDetector(
           onTap: () {
-            Get.toNamed(Routes.SIGN_IN);
+            // Get.toNamed(Routes.SIGN_IN);
             // Get.back();
           },
           child: Text(
@@ -111,7 +110,7 @@ class HomeView extends GetView<HomeController> {
                   minExtendedWidth: 200.w,
                   onDestinationSelected: (int index) {
                     controller.tabIndex(index);
-                    print('###selected tab index $index');
+                    // print('###selected tab index $index');
                   },
                   minWidth: 100.w,
                   groupAlignment: 0,

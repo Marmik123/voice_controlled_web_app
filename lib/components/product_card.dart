@@ -18,6 +18,7 @@ class ProductCard extends StatefulWidget {
   const ProductCard({Key? key, this.imgUrl, this.name, this.metric, this.price})
       : super(key: key);
 
+  @override
   _ProductCardState createState() => _ProductCardState();
 }
 
@@ -124,7 +125,7 @@ class _ProductCardState extends State<ProductCard> {
                       text: TextSpan(
                         children: [
                           TextSpan(
-                            text: '${quantity}',
+                            text: '$quantity',
                             style: TextStyle(
                               fontSize: 65.sp,
                             ),

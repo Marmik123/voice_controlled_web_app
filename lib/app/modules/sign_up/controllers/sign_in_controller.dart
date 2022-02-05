@@ -1,13 +1,12 @@
-import 'dart:developer';
-
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:voicewebapp/app/modules/home/views/home_view.dart';
+import 'package:voicewebapp/app/data/remote/provider/models/user.dart';
+import 'package:voicewebapp/app/routes/app_pages.dart';
 import 'package:voicewebapp/components/snack_bar.dart';
-import 'package:voicewebapp/utils/size_config.dart';
 
 class SignInController extends GetxController {
   final count = 0.obs;
@@ -19,12 +18,25 @@ class SignInController extends GetxController {
   TextEditingController lastName = TextEditingController();
   TextEditingController email = TextEditingController();
   TextEditingController password = TextEditingController();
-
+  final FirebaseFirestore _firestore = FirebaseFirestore.instance;
   final FirebaseAuth _auth = FirebaseAuth.instance;
 
   bool? authSignedIn;
   String? uid;
   String? userEmail;
+
+  Future<bool> signUpUser(LoggedInUser newUser) async {
+    try {
+      await _firestore.collection('Users').doc(_auth.currentUser!.uid).set({
+        'first_name': newUser.firstName,
+        'last_name': newUser.lastName,
+        'email': newUser.email
+      });
+    } catch (e) {
+      return false;
+    }
+    return true;
+  }
 
 //FUNCTION FOR REGISTERING THE USER
   Future<String?> registerWithEmailPassword(
@@ -32,13 +44,13 @@ class SignInController extends GetxController {
     // Initialize Firebase
     //await Firebase.initializeApp();
 
+    isLoading(true);
     try {
       final UserCredential userCredential =
           await _auth.createUserWithEmailAndPassword(
         email: email,
         password: password,
       );
-
       final User? user = userCredential.user;
 
       if (user != null) {
@@ -55,13 +67,19 @@ class SignInController extends GetxController {
           message: 'Successfully registered,User UID: ${user.uid}',
           snackbarState: SnackbarState.success,
         );
-        newRegisteration(false);
+        isLoading(false);
+        signUpUser(
+            LoggedInUser(firstName.text.trim(), lastName.text.trim(), email));
+        Get.toNamed(Routes.LOGIN_SCREEN);
+        dispose(); //Clearing all registeration text form fields.
         return 'Successfully registered, User UID: ${user.uid}';
       } else {
         return 'Error in register';
       }
     } on FirebaseAuthException catch (e) {
       print('${e.code}');
+      isLoading(false);
+
       if (e.code == 'email-already-in-use') {
         appSnackbar(
           message: 'User with this email ID already exist.',
@@ -76,6 +94,14 @@ class SignInController extends GetxController {
     }
   }
 
+  void dispose() {
+    firstName.clear();
+    lastName.clear();
+    password.clear();
+    email.clear();
+  }
+
+/*
 //FUNCTION FOR USER SIGN - IN && ADDED SHARED PREFERENCES
   Future<User?> signInWithEmailPassword(String email, String password) async {
     // Initialize Firebase
@@ -137,8 +163,9 @@ class SignInController extends GetxController {
       );
     }
   }
+*/
 
-//FUNCTION FOR SIGN OUT && Delete the shared preference data from localS.
+  //FUNCTION FOR SIGN OUT && Delete the shared preference data from localS.
   Future<String> signOut() async {
     await _auth.signOut();
 
@@ -150,13 +177,4 @@ class SignInController extends GetxController {
 
     return 'User signed out';
   }
-
-  @override
-  void onInit() {
-    SizeConfig.init();
-    super.onInit();
-  }
-
-  @override
-  void onClose() {}
 }

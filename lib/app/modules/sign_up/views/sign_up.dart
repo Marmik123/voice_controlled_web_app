@@ -47,7 +47,7 @@ class SignInView extends GetResponsiveView<SignInController> {
                   fit: BoxFit.fitHeight,
                 ),
               ),
-              FittedBox(
+/*              FittedBox(
                 fit: BoxFit.contain,
                 child: IconButton(
                   padding: EdgeInsets.only(top: 350.sp),
@@ -57,10 +57,10 @@ class SignInView extends GetResponsiveView<SignInController> {
                     controller.newRegisteration(false);
                   },
                 ),
-              ),
+              ),*/
               Expanded(
                 child: Padding(
-                  padding: EdgeInsets.fromLTRB(20.w, 350.h, 50.w, 20.h),
+                  padding: EdgeInsets.fromLTRB(50.w, 50.h, 50.w, 20.h),
                   child: SingleChildScrollView(
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.center,
@@ -70,8 +70,11 @@ class SignInView extends GetResponsiveView<SignInController> {
                         //HERE ObX is a  Getx widget for state management.
                         Obx(() => form(
                               formKey: controller.formKey,
+                              isSignUp: true,
                               emailTxtCtrl: controller.email,
                               passwordCtrl: controller.password,
+                              firstName: controller.firstName,
+                              lastName: controller.lastName,
                               passwordVisibility: Obx(() => GestureDetector(
                                     onTap: () {
                                       controller.hidePassword(
@@ -89,45 +92,44 @@ class SignInView extends GetResponsiveView<SignInController> {
                                   )),
                               hidePassword: controller.hidePassword(),
                             )),
-                        Obx(() => controller.isLoading()
-                            ? buildLoader()
-                            : ElevatedButton(
-                                child: controller.newRegisteration()
-                                    ? const Text('Register')
-                                    : const Text('Login'),
-                                style: ButtonStyle(
-                                    minimumSize: Size(
-                                      SizeConfig.screenWidth / 15,
-                                      SizeConfig.screenHeight / 18,
-                                    )
-                                        .msp, //where msp = MATERIAL STATE PROPERTY EXTENSION.
-                                    backgroundColor: AppColors.k00474E
-                                        .msp, //msp = Material State Property Extension
-                                    foregroundColor: Colors.white.msp,
-                                    elevation: 10.0.msp,
-                                    padding: EdgeInsets.zero.msp,
-                                    shape: RoundedRectangleBorder(
-                                      borderRadius: BorderRadius.circular(15),
-                                    ).msp //MATERIAL STATE PROPERTY EXTENSION,
-                                    ),
-                                onPressed: () {
-                                  ///Comment this on production.
-                                  Get.toNamed(Routes.HOME);
+                        Obx(
+                          () => controller.isLoading()
+                              ? buildLoader()
+                              : ElevatedButton(
+                                  child: const Text('Register'),
+                                  style: ButtonStyle(
+                                      minimumSize: Size(
+                                        SizeConfig.screenWidth / 15,
+                                        SizeConfig.screenHeight / 18,
+                                      )
+                                          .msp, //where msp = MATERIAL STATE PROPERTY EXTENSION.
+                                      backgroundColor: AppColors.k00474E
+                                          .msp, //msp = Material State Property Extension
+                                      foregroundColor: Colors.white.msp,
+                                      elevation: 10.0.msp,
+                                      padding: EdgeInsets.zero.msp,
+                                      shape: RoundedRectangleBorder(
+                                        borderRadius: BorderRadius.circular(15),
+                                      ).msp //MATERIAL STATE PROPERTY EXTENSION,
+                                      ),
+                                  onPressed: () {
+                                    ///Comment this for testing.
+                                    // Get.toNamed(Routes.HOME);
 
-                                  ///Uncomment this at last stage of project.
-                                  /*if (controller.formKey.currentState!
-                                      .validate()) {
-                                    controller.newRegisteration()
-                                        ? controller.registerWithEmailPassword(
-                                            controller.email.text.trim(),
-                                            controller.password.text.trim(),
-                                          )
-                                        : controller.signInWithEmailPassword(
-                                            controller.email.text.trim(),
-                                            controller.password.text.trim());
-                                  }*/
-                                },
-                              )),
+                                    ///Uncomment this at last stage of project.
+                                    if (controller.formKey.currentState!
+                                        .validate()) {
+                                      /*controller.newRegisteration()
+                                        ?*/
+
+                                      controller.registerWithEmailPassword(
+                                        controller.email.text.trim(),
+                                        controller.password.text.trim(),
+                                      );
+                                    }
+                                  },
+                                ),
+                        ),
                         h(height: 20),
                         Row(
                           mainAxisSize: MainAxisSize.max,
@@ -158,17 +160,18 @@ class SignInView extends GetResponsiveView<SignInController> {
                         TextButton(
                           onPressed: () {
                             controller.newRegisteration(true);
-                            Get.snackbar(
+                            Get.toNamed(Routes.LOGIN_SCREEN);
+                            /*Get.snackbar(
                               'Register with email and password',
                               'Please enter details',
                               backgroundColor: AppColors.kFFE7E7,
                               maxWidth: Get.width / 2,
                               margin: const EdgeInsets.all(10),
                               snackPosition: SnackPosition.TOP,
-                            );
+                            );*/
                           },
                           child: const Text(
-                            'New User? Register.',
+                            'Already Registered? Sign In',
                             style: TextStyle(
                               color: AppColors.k00474E,
                               fontWeight: FontWeight.w500,

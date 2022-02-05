@@ -13,6 +13,6 @@ abstract class Routes {
 abstract class _Paths {
   static const HOME = '/home';
   static const ABOUT_US = '/about-us';
-  static const LOGIN_SCREEN = '/login-screen';
-  static const SIGN_IN = '/sign-in';
+  static const LOGIN_SCREEN = '/login';
+  static const SIGN_IN = '/sign-up';
 }

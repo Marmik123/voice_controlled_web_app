@@ -83,14 +83,14 @@ class FirebaseHelper {
     return products;
   }
 
-  //For calling add to cart.
+  //For add to cart.
   Future<bool> addProductToCart(CartProduct cartproduct) async {
     try {
       //Before adding the product to the cart remember
       // to check the current stock with quantity requested by the user
       String? product = cartproduct.productName;
       int? quantity = cartproduct.quantity;
-      int current_price = await _firestore
+      int currentPrice = await _firestore
           .collection('Users')
           .doc(_auth.currentUser!.uid)
           .collection('cart')
@@ -111,7 +111,7 @@ class FirebaseHelper {
             'metric': cartproduct.metric,
           }
         ]),
-        'amount': current_price + (quantity ?? 0 * cartproduct.price!)
+        'amount': currentPrice + (quantity ?? 0 * cartproduct.price!)
       });
     } catch (e) {
       return false;
@@ -126,7 +126,7 @@ class FirebaseHelper {
       // to check the current stock with quantity requested by the user.
       String? productName = cartproduct.productName;
       int? quantity = cartproduct.quantity;
-      int current_price = await _firestore
+      int currentPrice = await _firestore
           .collection('Users')
           .doc(_auth.currentUser!.uid)
           .collection('cart')
@@ -163,7 +163,7 @@ class FirebaseHelper {
               'metric': cartproduct.metric
             }
           ]),
-          'amount': current_price -
+          'amount': currentPrice -
               (quantity ?? 0 * cartproduct.price!) +
               (modifiedQuantity * cartproduct.price!)
         });
@@ -174,7 +174,7 @@ class FirebaseHelper {
             .collection('cart')
             .doc(_auth.currentUser!.uid)
             .update({
-          'amount': current_price - (quantity ?? 0 * cartproduct.price!)
+          'amount': currentPrice - (quantity ?? 0 * cartproduct.price!)
         });
       }
     } catch (e) {

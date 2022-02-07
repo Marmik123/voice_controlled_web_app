@@ -11,6 +11,7 @@ final _firestore = FirebaseFirestore.instance;
 final _auth = FirebaseAuth.instance;
 
 class FirebaseHelper {
+  //TODO: DONE
   Future<bool> signUpUser(LoggedInUser newUser) async {
     try {
       await _firestore.collection('Users').doc(_auth.currentUser!.uid).set({
@@ -18,12 +19,22 @@ class FirebaseHelper {
         'last_name': newUser.lastName,
         'email': newUser.email
       });
+      /*   await _firestore
+          .collection('Users')
+          .doc(_auth.currentUser!.uid)
+          .collection('cart')
+          .doc(_auth.currentUser!.uid)
+          .set(<String, dynamic>{
+        'amount': 0,
+      });
+   */
     } catch (e) {
       return false;
     }
     return true;
   }
 
+  //TODO: DONE
   Future<bool> addProduct(Product product) async {
     try {
       await _firestore.collection('Products').doc(product.name).set({
@@ -40,6 +51,7 @@ class FirebaseHelper {
     return true;
   }
 
+  //TODO: LEFT
   Future<bool> modifyProduct(String productId, int qty) async {
     try {
       int currentStock = await _firestore
@@ -56,6 +68,7 @@ class FirebaseHelper {
     return true;
   }
 
+  //TODO: DONE
   //To Display products on the home screen.
   Future<List<Product>?> getProducts() async {
     List<Product> products = [];
@@ -67,12 +80,13 @@ class FirebaseHelper {
           docData = temp.data();
           print(docData);
           product = Product(
-              name: docData['name'],
-              category: docData['category'],
-              currentStock: docData['current_stock'],
-              urlImage: docData['image_url'],
-              price: docData['price'],
-              metric: docData['metric']);
+            name: docData['name'],
+            category: docData['category'],
+            currentStock: docData['current_stock'],
+            urlImage: docData['image_url'],
+            price: docData['price'],
+            metric: docData['metric'],
+          );
           products.add(product);
           print('inside firebase helper $products');
         }
@@ -90,29 +104,61 @@ class FirebaseHelper {
       // to check the current stock with quantity requested by the user
       String? product = cartproduct.productName;
       int? quantity = cartproduct.quantity;
-      int currentPrice = await _firestore
-          .collection('Users')
-          .doc(_auth.currentUser!.uid)
-          .collection('cart')
-          .doc(_auth.currentUser!.uid)
-          .get()
-          .then((value) => value.data()?['amount']);
+      bool isCartEmpty = false;
       await _firestore
           .collection('Users')
           .doc(_auth.currentUser!.uid)
           .collection('cart')
-          .doc(_auth.currentUser!.uid)
-          .update({
-        'items': FieldValue.arrayUnion([
-          {
-            'name': product,
-            'qty': quantity,
-            'price': cartproduct.price,
-            'metric': cartproduct.metric,
-          }
-        ]),
-        'amount': currentPrice + (quantity ?? 0 * cartproduct.price!)
+          .get()
+          .then((value) {
+        if (value.docs.isEmpty) {
+          isCartEmpty = true;
+        }
       });
+
+      if (isCartEmpty) {
+        await _firestore
+            .collection('Users')
+            .doc(_auth.currentUser!.uid)
+            .collection('cart')
+            .doc(_auth.currentUser!.uid)
+            .set(<String, dynamic>{
+          'items': FieldValue.arrayUnion([
+            {
+              'name': product,
+              'qty': quantity,
+              'price': cartproduct.price,
+              'metric': cartproduct.metric,
+            }
+          ]),
+          'amount': cartproduct.price,
+        });
+      } else {
+        //THIS IS USED ONLY WHEN THERE IS PRODUCT INSIDE THE CART.
+        int currentPrice = await _firestore
+            .collection('Users')
+            .doc(_auth.currentUser!.uid)
+            .collection('cart')
+            .doc(_auth.currentUser!.uid)
+            .get()
+            .then((value) => value.data()?['amount']);
+        await _firestore
+            .collection('Users')
+            .doc(_auth.currentUser!.uid)
+            .collection('cart')
+            .doc(_auth.currentUser!.uid)
+            .update({
+          'items': FieldValue.arrayUnion([
+            {
+              'name': product,
+              'qty': quantity,
+              'price': cartproduct.price,
+              'metric': cartproduct.metric,
+            }
+          ]),
+          'amount': currentPrice + ((quantity ?? 0) * cartproduct.price!)
+        });
+      }
     } catch (e) {
       return false;
     }
@@ -126,6 +172,7 @@ class FirebaseHelper {
       // to check the current stock with quantity requested by the user.
       String? productName = cartproduct.productName;
       int? quantity = cartproduct.quantity;
+      //FETCHED CART CURRENT PRICE.
       int currentPrice = await _firestore
           .collection('Users')
           .doc(_auth.currentUser!.uid)
@@ -133,7 +180,8 @@ class FirebaseHelper {
           .doc(_auth.currentUser!.uid)
           .get()
           .then((value) => value.data()?['amount']);
-      await _firestore
+
+      /*await _firestore
           .collection('Users')
           .doc(_auth.currentUser!.uid)
           .collection('cart')
@@ -142,12 +190,13 @@ class FirebaseHelper {
         'items': FieldValue.arrayRemove([
           {
             'name': productName,
-            'qty': quantity,
+            'qty': modifiedQuantity,
             'price': cartproduct.price,
             'metric': cartproduct.metric
           }
         ]),
-      });
+      });*/
+
       if (modifiedQuantity != 0) {
         await _firestore
             .collection('Users')
@@ -160,22 +209,22 @@ class FirebaseHelper {
               'name': productName,
               'qty': modifiedQuantity,
               'price': cartproduct.price,
-              'metric': cartproduct.metric
-            }
+              'metric': cartproduct.metric,
+            },
           ]),
           'amount': currentPrice -
               (quantity ?? 0 * cartproduct.price!) +
               (modifiedQuantity * cartproduct.price!)
         });
       } else {
-        await _firestore
+        /*await _firestore
             .collection('Users')
             .doc(_auth.currentUser!.uid)
             .collection('cart')
             .doc(_auth.currentUser!.uid)
             .update({
           'amount': currentPrice - (quantity ?? 0 * cartproduct.price!)
-        });
+        });*/
       }
     } catch (e) {
       return false;
@@ -253,7 +302,9 @@ class FirebaseHelper {
           .doc(_auth.currentUser!.uid)
           .collection('cart')
           .doc(_auth.currentUser!.uid)
-          .delete();
+          .set({
+        'amount': 0,
+      });
     } catch (e) {
       return false;
     }
@@ -306,6 +357,7 @@ class FirebaseHelper {
     return Orders;
   }
 
+  //TODO:ROMIL's
   Future<Product?> searchProduct(String productName) async {
     Product? resultantProduct;
     try {
@@ -335,13 +387,14 @@ class FirebaseHelper {
 
   //for search by vegetables,fruits.
   Future<List<Product>?> getProductsByCategory(String category) async {
-    List<Product>? products;
+    late List<Product> products = [];
     Map docData;
     Product product;
     try {
       await _firestore.collection('Products').get().then((querySnapShot) {
         for (var temp in querySnapShot.docs) {
           docData = temp.data();
+          print(docData);
           if (docData['category'] == category) {
             product = Product(
                 name: docData['name'],
@@ -350,7 +403,8 @@ class FirebaseHelper {
                 urlImage: docData['image_url'],
                 price: docData['price'],
                 metric: docData['metric']);
-            products?.add(product);
+            products.add(product);
+            print('CATEGORY SELECTION $products');
           }
         }
       });
@@ -360,7 +414,7 @@ class FirebaseHelper {
     return products;
   }
 
-  //Required only to call once.
+  //Required only to call once to populate dummy data.
   Future<bool> seeding() async {
     Data data = Data();
     print('seeding called');

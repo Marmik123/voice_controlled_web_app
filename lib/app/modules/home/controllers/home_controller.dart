@@ -1,9 +1,12 @@
 import 'dart:developer';
 
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:speech_to_text/speech_recognition_result.dart';
 import 'package:speech_to_text/speech_to_text.dart';
+import 'package:voicewebapp/app/data/remote/provider/models/cartProduct.dart';
 import 'package:voicewebapp/app/data/remote/provider/models/product.dart';
 import 'package:voicewebapp/controller/firebase_helper.dart';
 
@@ -13,14 +16,15 @@ class HomeController extends GetxController {
     const Icon(Icons.home): 'Home',
     const Icon(Icons.add_shopping_cart_outlined): 'Cart',
     const Icon(Icons.shopping_bag): 'Shop',
-    const Icon(Icons.contact_mail): 'Contact',
+    const Icon(Icons.logout): 'Logout',
   };
-  Map<Icon, String> navigationRail = {
+/*  Map<Icon, String> navigationRail = {
     const Icon(Icons.home): 'Beverages',
     const Icon(Icons.add_shopping_cart_outlined): 'Snacks and Foods',
     const Icon(Icons.shopping_bag): 'Fruits & Vegetables',
     const Icon(Icons.contact_mail): 'Food Grains',
-  };
+  };*/
+  final FirebaseAuth _auth = FirebaseAuth.instance;
 
   final SpeechToText speechToText = SpeechToText();
   //GETTER TO RETURN INSTANCE OF SPEECH TO TEXT.
@@ -30,19 +34,19 @@ class HomeController extends GetxController {
   get stopListening => _stopListening();*/
 
   RxBool speechEnabled = false.obs;
-  // RxBool addToCartButton = false.obs;
   RxString lastWords = ''.obs;
-  // RxInt productQuantity = 1.obs;
   final count = 0.obs;
   FirebaseHelper firebaseHelper = FirebaseHelper();
+  CartProduct cartProduct = CartProduct();
   List<Product>? products = [];
+  List<Product>? fruits = [];
   RxBool isLoading = false.obs;
   RxBool drawerExpanded = false.obs;
 
   @override
   void onInit() {
     super.onInit();
-    _initSpeech(); // FUNCTION TO CALL ONLY ONCE AN APP IS INITIALIZED.
+    // _initSpeech(); // FUNCTION TO CALL ONLY ONCE AN APP IS INITIALIZED.
     getProductsData();
   }
 
@@ -62,7 +66,15 @@ class HomeController extends GetxController {
     isLoading(false);
   }
 
-  /// Each time to start a speech recognition session
+  Future<void> getProductsByCategory({required String category}) async {
+    print('###########categrory called');
+    isLoading(true);
+    products = await firebaseHelper.getProductsByCategory(category);
+    // print(products);
+    isLoading(false);
+  }
+
+  /// Each time to start a speech recognition sess ion
   void startListening() async {
     await speechToText.listen(
       onResult: onSpeechResult,
@@ -90,6 +102,19 @@ class HomeController extends GetxController {
     update();
     print('LIST OF WORDS: ${result.alternates}');
     log(lastWords());
+  }
+
+  //FUNCTION FOR SIGN OUT && Delete the shared preference data from localS.
+  Future<String> signOut() async {
+    await _auth.signOut();
+
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    prefs.setBool('auth', false);
+
+    /*uid = null;
+    userEmail = null;*/
+
+    return 'User signed out';
   }
 
   @override

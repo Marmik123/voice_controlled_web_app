@@ -30,7 +30,7 @@ class SignInController extends GetxController {
       await _firestore.collection('Users').doc(_auth.currentUser!.uid).set({
         'first_name': newUser.firstName,
         'last_name': newUser.lastName,
-        'email': newUser.email
+        'email': newUser.email,
       });
     } catch (e) {
       return false;
@@ -68,7 +68,7 @@ class SignInController extends GetxController {
           snackbarState: SnackbarState.success,
         );
         isLoading(false);
-        signUpUser(
+        await signUpUser(
             LoggedInUser(firstName.text.trim(), lastName.text.trim(), email));
         Get.toNamed(Routes.LOGIN_SCREEN);
         dispose(); //Clearing all registeration text form fields.

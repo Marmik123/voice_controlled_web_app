@@ -5,7 +5,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:voicewebapp/app/data/remote/provider/models/cartProduct.dart';
+import 'package:voicewebapp/app/modules/home/controllers/home_controller.dart';
 import 'package:voicewebapp/components/sized_box.dart';
+import 'package:voicewebapp/components/snack_bar.dart';
 import 'package:voicewebapp/utils/app_colors.dart';
 import 'package:voicewebapp/utils/material_prop_ext.dart';
 
@@ -14,8 +17,17 @@ class ProductCard extends StatefulWidget {
   final String? name;
   final String? metric;
   final int? price;
+  final int? currentStock;
+  final Function? addToCart;
 
-  const ProductCard({Key? key, this.imgUrl, this.name, this.metric, this.price})
+  const ProductCard(
+      {Key? key,
+      this.imgUrl,
+      this.name,
+      this.metric,
+      this.price,
+      this.addToCart,
+      this.currentStock})
       : super(key: key);
 
   @override
@@ -25,14 +37,14 @@ class ProductCard extends StatefulWidget {
 class _ProductCardState extends State<ProductCard> {
   int quantity = 1;
   bool cardStatus = false;
-
+  HomeController hCtrl = Get.find<HomeController>();
   @override
   Widget build(BuildContext context) {
     return Container(
       padding: const EdgeInsets.all(5),
-      decoration: const BoxDecoration(
-        // borderRadius: BorderRadius.circular(15),
-        gradient: LinearGradient(
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(5),
+        gradient: const LinearGradient(
           colors: [
             AppColors.kproductCard1,
             AppColors.kproductCard2,
@@ -45,34 +57,45 @@ class _ProductCardState extends State<ProductCard> {
         crossAxisAlignment: CrossAxisAlignment.start,
         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
         children: [
-          Container(
-            width: Get.width / 4,
-            height: Get.height / 7,
-            child: Image(
-              fit: BoxFit.fill,
-              semanticLabel: 'Snacks image',
-              image: NetworkImage(
-                widget.imgUrl!,
+          GestureDetector(
+            onTap: () {
+              setState(() {
+                cardStatus = false;
+                quantity = 1;
+              });
+            },
+            child: ClipRRect(
+              borderRadius: BorderRadius.circular(20.r),
+              child: SizedBox(
+                width: Get.width / 4,
+                height: Get.height / 7,
+                child: Image(
+                  fit: BoxFit.fill,
+                  semanticLabel: 'Snacks image',
+                  image: NetworkImage(
+                    widget.imgUrl!,
+                  ),
+                ),
               ),
             ),
           ),
           Padding(
-            padding: EdgeInsets.only(left: 20.0.w),
+            padding: EdgeInsets.only(left: 15.0.w),
             child: Text(
               '${widget.name}',
               style: TextStyle(
-                fontWeight: FontWeight.w500,
+                fontWeight: FontWeight.w700,
                 fontSize: 75.sp,
               ),
             ),
           ),
           Padding(
-            padding: EdgeInsets.only(left: 20.w),
+            padding: EdgeInsets.only(left: 15.w),
             child: Text(
               'Rs: ${widget.price}/${widget.metric}',
               style: TextStyle(
                 fontWeight: FontWeight.w500,
-                fontSize: 75.sp,
+                fontSize: 55.sp,
               ),
             ),
           ),
@@ -80,99 +103,125 @@ class _ProductCardState extends State<ProductCard> {
               ?*/
           if (cardStatus)
             Expanded(
-              child: Row(
-                mainAxisSize: MainAxisSize.max,
-                mainAxisAlignment: MainAxisAlignment.spaceAround,
-                children: [
-                  IconButton(
-                      hoverColor: Colors.white,
-                      alignment: Alignment.center,
-                      icon: Icon(
-                        Icons.remove_circle,
-                        size: 35.w,
-                        color: quantity == 1 ? Colors.grey : Colors.white,
-                      ),
-                      onPressed: () {
-                        if (quantity > 1) {
-                          // quantity--
-                          setState(() {
-                            quantity--;
-                          });
-                        } else {
-                          Get.rawSnackbar(
-                            message: 'Minimum order quantity is 1',
-                            icon: const Icon(Icons.warning),
-                            backgroundColor: Colors.orangeAccent,
-                            snackPosition: SnackPosition.BOTTOM,
-                            overlayBlur: 1,
-                            borderRadius: 10,
-                            snackStyle: SnackStyle.FLOATING,
-                            margin: const EdgeInsets.all(10),
-                          );
-                        }
-                      }),
-                  Container(
-                    padding: const EdgeInsets.all(8),
-                    decoration: BoxDecoration(
-                      border: Border.all(
-                        color: Colors.grey,
-                        width: 1,
-                      ),
-                    ),
-                    child: RichText(
-                      overflow: TextOverflow.ellipsis,
-                      maxLines: 1,
-                      text: TextSpan(
-                        children: [
-                          TextSpan(
-                            text: '$quantity',
-                            style: TextStyle(
-                              fontSize: 65.sp,
-                            ),
-                          ),
-                          TextSpan(
-                            text: ' ${widget.metric}',
-                            style: GoogleFonts.sourceSansPro(
-                              fontWeight: FontWeight.bold,
-                              fontSize: 45.sp,
-                            ),
-                          ),
-                        ],
-                        style: GoogleFonts.sourceSansPro(
-                          color: const Color(0xff000000),
-                          fontWeight: FontWeight.bold,
-                          fontSize: 35.sp,
+              child: FittedBox(
+                fit: BoxFit.contain,
+                child: Row(
+                  mainAxisSize: MainAxisSize.max,
+                  mainAxisAlignment: MainAxisAlignment.spaceAround,
+                  children: [
+                    IconButton(
+                        hoverColor: Colors.white,
+                        alignment: Alignment.center,
+                        icon: Icon(
+                          Icons.remove_circle,
+                          size: 35.w,
+                          color: quantity == 1 ? Colors.grey : Colors.white,
+                        ),
+                        onPressed: () {
+                          if (quantity > 1) {
+                            // quantity--
+                            setState(() {
+                              quantity--;
+                            });
+                            cartUpdate();
+                          } else {
+                            Get.rawSnackbar(
+                              message: 'Minimum order quantity is 1',
+                              icon: const Icon(Icons.warning),
+                              backgroundColor: Colors.orangeAccent,
+                              snackPosition: SnackPosition.BOTTOM,
+                              overlayBlur: 1,
+                              borderRadius: 10,
+                              snackStyle: SnackStyle.FLOATING,
+                              margin: const EdgeInsets.all(10),
+                            );
+                          }
+                        }),
+                    Container(
+                      padding: const EdgeInsets.all(8),
+                      decoration: BoxDecoration(
+                        border: Border.all(
+                          color: Colors.grey,
+                          width: 1,
                         ),
                       ),
-                      textAlign: TextAlign.center,
+                      child: RichText(
+                        overflow: TextOverflow.ellipsis,
+                        maxLines: 1,
+                        text: TextSpan(
+                          children: [
+                            TextSpan(
+                              text: '$quantity',
+                              style: TextStyle(
+                                fontSize: 65.sp,
+                              ),
+                            ),
+                            TextSpan(
+                              text: ' ${widget.metric}',
+                              style: GoogleFonts.sourceSansPro(
+                                fontWeight: FontWeight.bold,
+                                fontSize: 45.sp,
+                              ),
+                            ),
+                          ],
+                          style: GoogleFonts.sourceSansPro(
+                            color: const Color(0xff000000),
+                            fontWeight: FontWeight.bold,
+                            fontSize: 35.sp,
+                          ),
+                        ),
+                        textAlign: TextAlign.center,
+                      ),
                     ),
-                  ),
-                  IconButton(
-                    alignment: Alignment.center,
-                    icon: Icon(
-                      Icons.add_circle,
-                      size: 35.w,
-                      color: AppColors.kffffff,
+                    IconButton(
+                      alignment: Alignment.center,
+                      icon: Icon(
+                        Icons.add_circle,
+                        size: 35.w,
+                        color: AppColors.kffffff,
+                      ),
+                      onPressed: () {
+                        //quantity
+                        // hCtrl.productQuantity(quantity + 1);
+                        setState(() {
+                          quantity++;
+                        });
+                        cartUpdate();
+                      },
                     ),
-                    onPressed: () {
-                      //quantity
-                      // hCtrl.productQuantity(quantity + 1);
-                      setState(() {
-                        quantity++;
-                      });
-                    },
-                  ),
-                ],
+                  ],
+                ),
               ),
             )
           else
             Padding(
-              padding: const EdgeInsets.all(8.0),
+              padding: EdgeInsets.all(8.0.w),
               child: ElevatedButton(
-                onPressed: () {
-                  setState(() {
-                    cardStatus = true;
-                  });
+                onPressed: () async {
+                  print('onPressed Called');
+                  if (quantity <= widget.currentStock!) {
+                    print('product is available');
+                    var addedToCart =
+                        await hCtrl.firebaseHelper.addProductToCart(
+                      CartProduct(
+                        productName: widget.name,
+                        quantity: quantity,
+                        price: widget.price,
+                        metric: widget.metric,
+                      ),
+                    );
+                    print('!!!${addedToCart}');
+                    setState(() {
+                      cardStatus = true;
+                      if (addedToCart) {
+                        appSnackbar(
+                          message: 'Added To Cart Successfully',
+                          snackbarState: SnackbarState.success,
+                        );
+                      }
+                    });
+                  }
+
                   // hCtrl.addToCartButton(true);
                 },
                 style: ButtonStyle(
@@ -180,6 +229,7 @@ class _ProductCardState extends State<ProductCard> {
                   padding: const EdgeInsets.all(8).msp,
                 ),
                 child: FittedBox(
+                  fit: BoxFit.fitWidth,
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                     children: [
@@ -194,7 +244,7 @@ class _ProductCardState extends State<ProductCard> {
                         onPressed: () {
                           //quantity++
                         },
-                      )
+                      ),
                     ],
                   ),
                 ),
@@ -204,6 +254,23 @@ class _ProductCardState extends State<ProductCard> {
         ],
       ),
     );
+  }
+
+  Future<void> cartUpdate() async {
+    var cardUpdate = await hCtrl.firebaseHelper.modifyCart(
+      CartProduct(
+        productName: widget.name,
+        quantity: quantity,
+        price: widget.price,
+        metric: widget.metric,
+      ),
+      quantity,
+    );
+    if (cardUpdate) {
+      appSnackbar(
+          message: 'Cart Updated Succesfully',
+          snackbarState: SnackbarState.success);
+    }
   }
 }
 

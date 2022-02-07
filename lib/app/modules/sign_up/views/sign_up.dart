@@ -134,25 +134,13 @@ class SignInView extends GetResponsiveView<SignInController> {
                         Row(
                           mainAxisSize: MainAxisSize.max,
                           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                          children: const [
+                          children: [
                             Expanded(
-                              child: Divider(
-                                color: AppColors.kC4C4C4,
-                                indent: 12,
-                                thickness: 1.5,
-                                endIndent: 15,
-                                // endIndent: 2,
-                              ),
+                              child: buildDivider(),
                             ),
-                            Text('OR'),
+                            const Text('OR'),
                             Expanded(
-                              child: Divider(
-                                color: AppColors.kC4C4C4,
-                                indent: 12,
-                                thickness: 1.5,
-                                endIndent: 15,
-                                // endIndent: 2,
-                              ),
+                              child: buildDivider(),
                             ),
                           ],
                         ),
@@ -200,6 +188,16 @@ class SignInView extends GetResponsiveView<SignInController> {
           ),
         ),
       ),
+    );
+  }
+
+  Divider buildDivider() {
+    return const Divider(
+      color: AppColors.kC4C4C4,
+      indent: 12,
+      thickness: 1.5,
+      endIndent: 15,
+      // endIndent: 2,
     );
   }
 }

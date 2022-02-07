@@ -69,28 +69,32 @@ class LoginScreenView extends GetView<LoginScreenController> {
                       children: [
                         //LOGIN OR REGISTER FORM COMPONENT.
                         //HERE ObX is a  Getx widget for state management.
-                        Obx(() => form(
-                              formKey: controller.formKey,
-                              isSignUp: false,
-                              emailTxtCtrl: controller.email,
-                              passwordCtrl: controller.password,
-                              passwordVisibility: Obx(() => GestureDetector(
-                                    onTap: () {
-                                      controller.hidePassword(
-                                          !controller.hidePassword());
-                                    },
-                                    child: controller.hidePassword()
-                                        ? const Icon(
-                                            Icons.visibility_off,
-                                            color: Colors.black,
-                                          )
-                                        : const Icon(
-                                            Icons.remove_red_eye_sharp,
-                                            color: Colors.black,
-                                          ),
-                                  )),
-                              hidePassword: controller.hidePassword(),
-                            )),
+                        Obx(
+                          () => form(
+                            formKey: controller.formKey,
+                            isSignUp: false,
+                            emailTxtCtrl: controller.email,
+                            passwordCtrl: controller.password,
+                            passwordVisibility: Obx(
+                              () => GestureDetector(
+                                onTap: () {
+                                  controller
+                                      .hidePassword(!controller.hidePassword());
+                                },
+                                child: controller.hidePassword()
+                                    ? const Icon(
+                                        Icons.visibility_off,
+                                        color: Colors.black,
+                                      )
+                                    : const Icon(
+                                        Icons.remove_red_eye_sharp,
+                                        color: Colors.black,
+                                      ),
+                              ),
+                            ),
+                            hidePassword: controller.hidePassword(),
+                          ),
+                        ),
                         Obx(() => controller.isLoading()
                             ? buildLoader()
                             : ElevatedButton(

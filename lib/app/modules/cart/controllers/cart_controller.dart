@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:voicewebapp/app/data/remote/provider/models/cartProduct.dart';
 import 'package:voicewebapp/app/data/remote/provider/models/product.dart';
@@ -10,6 +11,13 @@ class CartController extends GetxController {
   FirebaseHelper firebaseHelper = FirebaseHelper();
   final _firestore = FirebaseFirestore.instance;
   final _auth = FirebaseAuth.instance;
+  GlobalKey checkoutKey = GlobalKey<FormState>();
+  TextEditingController city = TextEditingController();
+  TextEditingController pincode = TextEditingController();
+  TextEditingController state = TextEditingController();
+  TextEditingController landmark = TextEditingController();
+  TextEditingController flatNo = TextEditingController();
+  TextEditingController apartMent = TextEditingController();
   RxInt cartTotal = 0.obs;
   RxBool isLoading = false.obs;
   RxList<Product>? searchedProduct = <Product>[].obs;

@@ -386,7 +386,7 @@ class FirebaseHelper {
           .collection('Orders')
           .add({
         'items': FieldValue.arrayUnion(
-            temp!), //TODO:CHECK FOR THE NULL AWARE OF TEMP.
+            temp!),
         'amount': amount,
         'address': address.flatNumber +
             " " +

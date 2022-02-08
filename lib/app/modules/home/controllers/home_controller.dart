@@ -32,6 +32,7 @@ class HomeController extends GetxController {
   /*//FUNCTION GETTERS.
   get startListening => _startListening();
   get stopListening => _stopListening();*/
+  RxList<Product>? searchedResult = <Product>[].obs;
 
   RxBool speechEnabled = false.obs;
   RxString lastWords = ''.obs;

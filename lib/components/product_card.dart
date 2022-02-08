@@ -36,7 +36,7 @@ class ProductCard extends StatefulWidget {
 
 class _ProductCardState extends State<ProductCard> {
   int quantity = 1;
-  int modifiedQuant = 1;
+  int modifiedQuantity = 1;
   bool cardStatus = false;
   HomeController hCtrl = Get.find<HomeController>();
   @override
@@ -62,7 +62,6 @@ class _ProductCardState extends State<ProductCard> {
             onTap: () {
               setState(() {
                 cardStatus = false;
-                quantity = 1;
               });
             },
             child: ClipRRect(
@@ -106,89 +105,122 @@ class _ProductCardState extends State<ProductCard> {
             Expanded(
               child: FittedBox(
                 fit: BoxFit.contain,
-                child: Row(
-                  mainAxisSize: MainAxisSize.max,
-                  mainAxisAlignment: MainAxisAlignment.spaceAround,
+                child: Column(
                   children: [
-                    IconButton(
-                        hoverColor: Colors.white,
-                        alignment: Alignment.center,
-                        icon: Icon(
-                          Icons.remove_circle,
-                          size: 35.w,
-                          color: quantity == 1 ? Colors.grey : Colors.white,
-                        ),
-                        onPressed: () {
-                          if (quantity > 1) {
-                            // quantity--
-                            setState(() {
-                              quantity--;
-                            });
-                            cartUpdate();
-                          } else {
-                            Get.rawSnackbar(
-                              message: 'Minimum order quantity is 1',
-                              icon: const Icon(Icons.warning),
-                              backgroundColor: Colors.orangeAccent,
-                              snackPosition: SnackPosition.BOTTOM,
-                              overlayBlur: 1,
-                              borderRadius: 10,
-                              snackStyle: SnackStyle.FLOATING,
-                              margin: const EdgeInsets.all(10),
-                            );
-                          }
-                        }),
-                    Container(
-                      padding: const EdgeInsets.all(8),
-                      decoration: BoxDecoration(
-                        border: Border.all(
-                          color: Colors.grey,
-                          width: 1,
-                        ),
-                      ),
-                      child: RichText(
-                        overflow: TextOverflow.ellipsis,
-                        maxLines: 1,
-                        text: TextSpan(
-                          children: [
-                            TextSpan(
-                              text: '$quantity',
-                              style: TextStyle(
-                                fontSize: 65.sp,
-                              ),
+                    Row(
+                      mainAxisSize: MainAxisSize.max,
+                      mainAxisAlignment: MainAxisAlignment.spaceAround,
+                      children: [
+                        IconButton(
+                            hoverColor: Colors.white,
+                            alignment: Alignment.center,
+                            icon: Icon(
+                              Icons.remove_circle,
+                              size: 35.w,
+                              color: quantity == 1 ? Colors.grey : Colors.white,
                             ),
-                            TextSpan(
-                              text: ' ${widget.metric}',
+                            onPressed: () {
+                              if (modifiedQuantity > 0) {
+                                // quantity--
+                                setState(() {
+                                  modifiedQuantity--;
+                                });
+                                // cartUpdate(quantity+1);
+                              } else {
+                                Get.rawSnackbar(
+                                  message: 'Minimum order quantity is 1',
+                                  icon: const Icon(Icons.warning),
+                                  backgroundColor: Colors.orangeAccent,
+                                  snackPosition: SnackPosition.BOTTOM,
+                                  overlayBlur: 1,
+                                  borderRadius: 10,
+                                  snackStyle: SnackStyle.FLOATING,
+                                  margin: const EdgeInsets.all(10),
+                                );
+                              }
+                            }),
+                        Container(
+                          padding: const EdgeInsets.all(8),
+                          decoration: BoxDecoration(
+                            border: Border.all(
+                              color: Colors.grey,
+                              width: 1,
+                            ),
+                          ),
+                          child: RichText(
+                            overflow: TextOverflow.ellipsis,
+                            maxLines: 1,
+                            text: TextSpan(
+                              children: [
+                                TextSpan(
+                                  text: '$modifiedQuantity',
+                                  style: TextStyle(
+                                    fontSize: 65.sp,
+                                  ),
+                                ),
+                                TextSpan(
+                                  text: ' ${widget.metric}',
+                                  style: GoogleFonts.sourceSansPro(
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: 45.sp,
+                                  ),
+                                ),
+                              ],
                               style: GoogleFonts.sourceSansPro(
+                                color: const Color(0xff000000),
                                 fontWeight: FontWeight.bold,
-                                fontSize: 45.sp,
+                                fontSize: 35.sp,
                               ),
                             ),
-                          ],
-                          style: GoogleFonts.sourceSansPro(
-                            color: const Color(0xff000000),
-                            fontWeight: FontWeight.bold,
-                            fontSize: 35.sp,
+                            textAlign: TextAlign.center,
                           ),
                         ),
-                        textAlign: TextAlign.center,
-                      ),
+                        IconButton(
+                          alignment: Alignment.center,
+                          icon: Icon(
+                            Icons.add_circle,
+                            size: 35.w,
+                            color: AppColors.kffffff,
+                          ),
+                          onPressed: () {
+                            //quantity
+                            // hCtrl.productQuantity(quantity + 1);
+                            setState(() {
+                              modifiedQuantity++;
+                            });
+                            // cartUpdate(quantity-1);
+                          },
+                        ),
+                      ],
                     ),
-                    IconButton(
-                      alignment: Alignment.center,
-                      icon: Icon(
-                        Icons.add_circle,
-                        size: 35.w,
-                        color: AppColors.kffffff,
+                    Padding(
+                      padding: EdgeInsets.all(8.0.w),
+                      child: ElevatedButton(
+                        onPressed: () async {},
+                        style: ButtonStyle(
+                          elevation: 10.0.msp,
+                          padding: const EdgeInsets.all(8).msp,
+                        ),
+                        child: FittedBox(
+                            fit: BoxFit.fitWidth,
+                            child: TextButton(
+                              onPressed: () {
+                                cartUpdate(modifiedQuantity, quantity);
+                                setState(() {
+                                  quantity = modifiedQuantity;
+                                });
+                                if (modifiedQuantity == 0) {
+                                  setState(() {
+                                    cardStatus = false;
+                                  });
+                                }
+                              },
+                              child: const Text(
+                                'Modify',
+                                style: TextStyle(color: Colors.white),
+                              ),
+                            )),
                       ),
-                      onPressed: () {
-                        //quantity
-                        // hCtrl.productQuantity(quantity + 1);
-                        setState(() {
-                          quantity++;
-                        });
-                        cartUpdate();
-                      },
                     ),
                   ],
                 ),
@@ -209,12 +241,15 @@ class _ProductCardState extends State<ProductCard> {
                         quantity: quantity,
                         price: widget.price,
                         metric: widget.metric,
+                        img: widget.imgUrl,
                       ),
                     );
                     print('!!!${addedToCart}');
                     setState(() {
                       cardStatus = true;
-                      if (addedToCart) {
+                      quantity = addedToCart[0];
+                      modifiedQuantity = addedToCart[0];
+                      if (addedToCart[1]) {
                         appSnackbar(
                           message: 'Added To Cart Successfully',
                           snackbarState: SnackbarState.success,
@@ -257,16 +292,35 @@ class _ProductCardState extends State<ProductCard> {
     );
   }
 
-  Future<void> cartUpdate() async {
+  // Row(
+  // mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+  // children: [
+  // const Text('Modify'),
+  // IconButton(
+  // alignment: Alignment.center,
+  // icon: Icon(
+  // Icons.edit,
+  // size: 35.w,
+  // color: Colors.white,
+  // ),
+  // onPressed: () {
+  // cartUpdate(modifiedQuantity, quantity);
+  // },
+  // ),
+  // ],
+  // ),
+  Future<void> cartUpdate(int modifiedQuantity, int previousQuantity) async {
+    print(modifiedQuantity);
+    print(previousQuantity);
     var cardUpdate = await hCtrl.firebaseHelper.modifyCart(
-      CartProduct(
-        productName: widget.name,
-        quantity: quantity,
-        price: widget.price,
-        metric: widget.metric,
-      ),
-      quantity,
-    );
+        CartProduct(
+            productName: widget.name,
+            quantity: quantity,
+            price: widget.price,
+            metric: widget.metric,
+            img: widget.imgUrl),
+        modifiedQuantity,
+        previousQuantity);
     if (cardUpdate) {
       appSnackbar(
           message: 'Cart Updated Succesfully',

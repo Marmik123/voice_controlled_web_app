@@ -39,7 +39,7 @@ class AllCategories extends GetView {
               child: Obx(() => hCtrl.isLoading()
                   ? Center(child: buildLoader())
                   : buildGridView()),
-            )
+            ),
           ],
         ),
       ),

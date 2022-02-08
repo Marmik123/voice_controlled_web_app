@@ -11,8 +11,8 @@ import 'package:voicewebapp/app/data/remote/provider/models/product.dart';
 import 'package:voicewebapp/controller/firebase_helper.dart';
 
 class HomeController extends GetxController {
-  RxInt tabIndex = 0.obs;
-  Map<Icon, String> appBarItems = {
+  RxInt tabIndex = 1.obs;
+  Map<Widget, String> appBarItems = {
     const Icon(Icons.home): 'Home',
     const Icon(Icons.add_shopping_cart_outlined): 'Cart',
     const Icon(Icons.shopping_bag): 'Shop',
@@ -42,6 +42,7 @@ class HomeController extends GetxController {
   List<Product>? fruits = [];
   RxBool isLoading = false.obs;
   RxBool drawerExpanded = false.obs;
+  TextEditingController searchBarCtrl = TextEditingController();
 
   @override
   void onInit() {

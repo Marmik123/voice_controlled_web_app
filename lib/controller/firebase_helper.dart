@@ -5,6 +5,7 @@ import 'package:voicewebapp/app/data/remote/provider/models/cartProduct.dart';
 import 'package:voicewebapp/app/data/remote/provider/models/order.dart';
 import 'package:voicewebapp/app/data/remote/provider/models/product.dart';
 import 'package:voicewebapp/app/data/remote/provider/models/user.dart';
+import 'package:voicewebapp/components/snack_bar.dart';
 import 'package:voicewebapp/seed/seed.dart';
 
 final _firestore = FirebaseFirestore.instance;
@@ -362,8 +363,10 @@ class FirebaseHelper {
   }
 
   //TODO:ROMIL's
-  Future<Product?> searchProduct(String productName) async {
+  Future<List<Product>?> searchProduct(String productName) async {
+    List<Product>? searchedProduct = [];
     Product? resultantProduct;
+
     try {
       var docData = await _firestore
           .collection('Products')
@@ -379,14 +382,20 @@ class FirebaseHelper {
             urlImage: docData['image_url'],
             price: docData['price'],
             metric: docData['metric']);
+        searchedProduct.add(resultantProduct);
       } else {
         print('docData is null');
+        appSnackbar(
+            message: 'Item Not found', snackbarState: SnackbarState.warning);
       }
     } catch (e) {
-      return null;
+      appSnackbar(
+          message: 'Error occured: $e', snackbarState: SnackbarState.warning);
+
+      return [];
     }
 
-    return resultantProduct;
+    return searchedProduct;
   }
 
   //for search by vegetables,fruits.

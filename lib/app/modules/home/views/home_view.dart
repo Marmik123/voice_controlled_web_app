@@ -4,6 +4,7 @@ import 'package:get/get.dart';
 import 'package:voicewebapp/app/modules/home/views/all_categories.dart';
 import 'package:voicewebapp/app/modules/home/views/beverages.dart';
 import 'package:voicewebapp/app/modules/home/views/fruits_view.dart';
+import 'package:voicewebapp/app/modules/home/views/search_by_name.dart';
 import 'package:voicewebapp/app/modules/home/views/vegetables.dart';
 import 'package:voicewebapp/app/routes/app_pages.dart';
 import 'package:voicewebapp/components/appBar_Component.dart';
@@ -41,19 +42,18 @@ class HomeView extends GetView<HomeController> {
         leadingWidth: 25,
         backgroundColor: Theme.of(context).bottomAppBarColor,
         elevation: 5,
-        title: GestureDetector(
-          onTap: () {
-            // Get.toNamed(Routes.SIGN_IN);
-            // Get.back();
-          },
-          child: Text(
-            "Voice Controlled Web App",
-            style: TextStyle(
-              color: theme.colorScheme.secondary,
-              fontSize: 120.sp,
-              fontWeight: FontWeight.w500,
+        title: Row(
+          children: [
+            Text(
+              "Voice Controlled Web App",
+              style: TextStyle(
+                color: theme.colorScheme.secondary,
+                fontSize: 120.sp,
+                fontWeight: FontWeight.w500,
+              ),
             ),
-          ),
+            //SEARCH PRODUCT.
+          ],
         ),
         /*Container(
                     margin: EdgeInsets.only(top: 5),
@@ -94,26 +94,28 @@ class HomeView extends GetView<HomeController> {
                   )
 */
         actions: controller.appBarItems.entries
-            .map((appBarItem) => appBarComponent(
-                  iconButton: IconButton(
-                    icon: appBarItem.key, //key= Icon
-                    iconSize: 130.r,
-                    color: theme.primaryColor,
-                    onPressed: () {
-                      switch (appBarItem.value) {
-                        case 'Cart':
-                          Get.toNamed(Routes.CART);
-                          break;
-                        case 'Logout':
-                          hCtrl.signOut();
-                          Get.offAllNamed(Routes.SIGN_IN);
-                          break;
-                      }
-                    },
-                    // tooltip: "Home",
-                  ),
-                  belowText: '${appBarItem.value}', //value=appBarItem Text.
-                ))
+            .map(
+              (appBarItem) => appBarComponent(
+                iconButton: IconButton(
+                  icon: appBarItem.key, //key= Icon
+                  iconSize: 130.r,
+                  color: theme.primaryColor,
+                  onPressed: () {
+                    switch (appBarItem.value) {
+                      case 'Cart':
+                        Get.toNamed(Routes.CART);
+                        break;
+                      case 'Logout':
+                        hCtrl.signOut();
+                        Get.offAllNamed(Routes.SIGN_IN);
+                        break;
+                    }
+                  },
+                  // tooltip: "Home",
+                ),
+                belowText: '${appBarItem.value}', //value=appBarItem Text.
+              ),
+            )
             .toList(),
       ),
       body: SizedBox(
@@ -129,12 +131,11 @@ class HomeView extends GetView<HomeController> {
                     // print('###selected tab index $index');
                   },
                   minWidth: 50.w,
-                  groupAlignment: 0,
                   backgroundColor: Colors.blueGrey[280],
                   elevation: 15,
                   labelType: NavigationRailLabelType.all,
                   leading: SizedBox(
-                    height: 0.1.sh,
+                    height: 0.2.sh,
                     width: 0.15.sw,
                     child: Column(
                       children: [
@@ -172,6 +173,12 @@ class HomeView extends GetView<HomeController> {
                   ),
                   destinations: [
                     //TODO: ROMIL's TASK =>Already Made a Component for below widget just want you to add selectedIcon property inside controller naviagtionRailComponent and made it in a similar way like appBarComponent using .map().toList().
+                    NavigationRailDestination(
+                      icon: Icon(Icons.search),
+                      label: const Text(
+                        "Search by name",
+                      ),
+                    ),
                     NavigationRailDestination(
                       icon: Icon(
                         Icons.home_filled,
@@ -225,7 +232,7 @@ class HomeView extends GetView<HomeController> {
                         color: theme.colorScheme.secondary,
                       ),
                     ),
-                    NavigationRailDestination(
+                    /*NavigationRailDestination(
                       icon: Icon(
                         Icons.supervised_user_circle_sharp,
                         color: theme.disabledColor,
@@ -237,7 +244,7 @@ class HomeView extends GetView<HomeController> {
                         Icons.supervised_user_circle_sharp,
                         color: theme.colorScheme.secondary,
                       ),
-                    ),
+                    ),*/
                   ],
                   selectedIndex: controller.tabIndex(),
                   selectedLabelTextStyle: TextStyle(
@@ -246,7 +253,7 @@ class HomeView extends GetView<HomeController> {
                 )),
             const VerticalDivider(thickness: 1, width: 3),
             Obx(
-              () => controller.tabIndex() == 0
+              () => controller.tabIndex() == 1
                   ? Expanded(
                       child: Container(
                         padding: const EdgeInsets.all(16),
@@ -265,28 +272,35 @@ class HomeView extends GetView<HomeController> {
                       )*/
                       ),
                     )
-                  : controller.tabIndex() == 1
+                  : controller.tabIndex() == 2
                       ? Expanded(
                           child: Container(
                             padding: const EdgeInsets.all(16),
                             child: Beverages(),
                           ),
                         )
-                      : controller.tabIndex() == 2
+                      : controller.tabIndex() == 3
                           ? Expanded(
                               child: Container(
                                 padding: const EdgeInsets.all(16),
                                 child: VegetableView(),
                               ),
                             )
-                          : controller.tabIndex() == 3
+                          : controller.tabIndex() == 4
                               ? Expanded(
                                   child: Container(
                                     padding: const EdgeInsets.all(16),
                                     child: FruitsView(),
                                   ),
                                 )
-                              : Container(),
+                              : controller.tabIndex() == 0
+                                  ? Expanded(
+                                      child: Container(
+                                        padding: const EdgeInsets.all(16),
+                                        child: SearchByName(),
+                                      ),
+                                    )
+                                  : Container(),
             ),
           ],
         ),

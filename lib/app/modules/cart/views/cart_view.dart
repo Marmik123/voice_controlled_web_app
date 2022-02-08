@@ -15,7 +15,7 @@ class CartView extends GetView<CartController> {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    controller.getCartTotal();
+    // controller.getCartTotal();
     return SafeArea(
       child: Scaffold(
           appBar: AppBar(
@@ -32,7 +32,7 @@ class CartView extends GetView<CartController> {
                 onPressed: () {
                   Get.offAndToNamed(Routes.HOME);
                 },
-              )
+              ),
             ],
           ),
           body: SizedBox(

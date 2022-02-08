@@ -12,6 +12,7 @@ final _auth = FirebaseAuth.instance;
 
 class FirebaseHelper {
   //TODO: DONE
+  // CartController cartCtrl = Get.put(CartController());
   Future<bool> signUpUser(LoggedInUser newUser) async {
     try {
       await _firestore.collection('Users').doc(_auth.currentUser!.uid).set({
@@ -154,6 +155,7 @@ class FirebaseHelper {
               'qty': quantity,
               'price': cartproduct.price,
               'metric': cartproduct.metric,
+              // 'img':cartproduct.,
             }
           ]),
           'amount': currentPrice + ((quantity ?? 0) * cartproduct.price!)
@@ -204,7 +206,7 @@ class FirebaseHelper {
             .collection('cart')
             .doc(_auth.currentUser!.uid)
             .update({
-          'items': FieldValue.arrayRemove([
+          'items': FieldValue.arrayUnion([
             {
               'name': productName,
               'qty': modifiedQuantity,
@@ -233,8 +235,8 @@ class FirebaseHelper {
   }
 
   Future<Cart?> getCart() async {
-    List<CartProduct>? listOfCartProducts;
-    List products;
+    List<CartProduct> listOfCartProducts = [];
+    List products = [];
     int? amount;
     CartProduct cartProduct;
     try {
@@ -249,17 +251,19 @@ class FirebaseHelper {
         amount = value.data()?['amount'] ?? 999;
         for (var temp in products) {
           cartProduct = CartProduct(
-              productName: temp['name'],
-              quantity: temp['qty'],
-              price: temp['price'],
-              metric: temp['metric']);
-          listOfCartProducts?.add(cartProduct);
+            productName: temp['name'],
+            quantity: temp['qty'],
+            price: temp['price'],
+            metric: temp['metric'],
+          );
+          listOfCartProducts.add(cartProduct);
         }
       });
+      // await cartCtrl.getCartTotal();
     } catch (e) {
       return null;
     }
-    return Cart(listOfCartProducts!, amount!);
+    return Cart(listOfCartProducts, amount!);
   }
 
   Future<bool> checkOut(Cart cart, Address address) async {

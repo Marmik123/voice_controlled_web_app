@@ -1,9 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:voicewebapp/utils/material_prop_ext.dart';
 
 Widget button({
   Function? onPressed,
   String? btnText,
+  double? btnWidth,
+  double? cartAmount,
 }) {
   return ElevatedButton(
     onPressed: () {
@@ -14,7 +17,8 @@ Widget button({
     },
     style: ButtonStyle(
       elevation: 10.0.msp,
-      padding: const EdgeInsets.all(8).msp,
+      minimumSize: Size(450.w, 80.h).msp,
+      padding: const EdgeInsets.all(12).msp,
     ),
     child: FittedBox(
       child: Row(

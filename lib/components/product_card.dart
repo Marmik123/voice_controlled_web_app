@@ -36,6 +36,7 @@ class ProductCard extends StatefulWidget {
 
 class _ProductCardState extends State<ProductCard> {
   int quantity = 1;
+  int modifiedQuant = 1;
   bool cardStatus = false;
   HomeController hCtrl = Get.find<HomeController>();
   @override

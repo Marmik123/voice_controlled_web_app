@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:voicewebapp/utils/app_colors.dart';
 
 Divider buildDivider({
-  double? leftIndent,
-  double? rightIndent,
+  double? leftIndent = 0,
+  double? rightIndent = 0,
 }) {
   return Divider(
     color: AppColors.kC4C4C4,

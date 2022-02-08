@@ -79,6 +79,9 @@ class Beverages extends GetView<HomeController> {
                                   metric:
                                       snapShot.data?[itemIndex].metric ?? '-',
                                   price: snapShot.data?[itemIndex].price ?? 0,
+                                  currentStock:
+                                      snapShot.data?[itemIndex].currentStock ??
+                                          0,
                                 ),
                               );
                             }

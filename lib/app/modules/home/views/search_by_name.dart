@@ -141,6 +141,10 @@ class SearchByName extends GetView<HomeController> {
                                 price: controller
                                         .searchedResult?[itemIndex].price ??
                                     0,
+                                currentStock: controller
+                                        .searchedResult?[itemIndex]
+                                        .currentStock ??
+                                    0,
                               );
                             },
                           ),

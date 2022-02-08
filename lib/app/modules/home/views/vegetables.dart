@@ -67,6 +67,8 @@ class VegetableView extends GetView<HomeController> {
                                     'https://picsum.photos/200',
                                 metric: snapShot.data?[itemIndex].metric ?? '-',
                                 price: snapShot.data?[itemIndex].price ?? 0,
+                                currentStock:
+                                    snapShot.data?[itemIndex].currentStock ?? 0,
                               ),
                             );
                           } else {

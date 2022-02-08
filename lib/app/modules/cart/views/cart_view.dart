@@ -22,18 +22,19 @@ class CartView extends GetView<CartController> {
             leading: IconButton(
               icon: const Icon(Icons.arrow_back),
               onPressed: () {
-                Get.back();
+                // Get.back();
+                Get.offAndToNamed(Routes.HOME);
               },
             ),
             title: const Text('Your Cart'),
-            actions: [
-              IconButton(
-                icon: Icon(Icons.home),
-                onPressed: () {
-                  Get.offAndToNamed(Routes.HOME);
-                },
-              )
-            ],
+            // actions: [
+            //   IconButton(
+            //     icon: Icon(Icons.home),
+            //     onPressed: () {
+            //       Get.offAndToNamed(Routes.HOME);
+            //     },
+            //   )
+            // ],
           ),
           body: SizedBox(
             // height: 0.95.sh,
@@ -79,13 +80,13 @@ class CartView extends GetView<CartController> {
                                                 fontSize: 125.sp,
                                               ),
                                             ),
-                                            Text(
-                                              'Total: ${snapShot.data!.amount.toString()}',
-                                              style: TextStyle(
-                                                fontSize: 80.sp,
-                                                fontWeight: FontWeight.w700,
-                                              ),
-                                            ),
+                                            // Text(
+                                            //   'Total: ${snapShot.data!.amount.toString()}',
+                                            //   style: TextStyle(
+                                            //     fontSize: 80.sp,
+                                            //     fontWeight: FontWeight.w700,
+                                            //   ),
+                                            // ),
                                           ],
                                         ),
                                         buildDivider(),
@@ -98,8 +99,9 @@ class CartView extends GetView<CartController> {
                                                 contentPadding:
                                                     EdgeInsets.only(top: 50.h),
                                                 tileColor: Colors.white24,
-                                                leading: Image.network(
-                                                    'https://picsum.photos/200/300'),
+                                                leading: Image.network(snapShot
+                                                    .data!.products[index].img
+                                                    .toString()),
                                                 title: Text(snapShot.data!
                                                     .products[index].productName
                                                     .toString()),
@@ -135,39 +137,57 @@ class CartView extends GetView<CartController> {
                                                               color: Colors
                                                                   .grey, //quantity == 1 ? Colors.grey : Colors.white,
                                                             ),
-                                                            onPressed: () {
-                                                              // quantity > 1
-                                                              if (false) {
-                                                                // quantity--
-                                                                /* setState(() {
-                                                        quantity--;
-                                                      });
-                                                   */
-                                                              } else {
-                                                                Get.rawSnackbar(
-                                                                  message:
-                                                                      'Minimum order quantity is 1',
-                                                                  icon: const Icon(
-                                                                      Icons
-                                                                          .warning),
-                                                                  backgroundColor:
-                                                                      Colors
-                                                                          .orangeAccent,
-                                                                  snackPosition:
-                                                                      SnackPosition
-                                                                          .BOTTOM,
-                                                                  overlayBlur:
+                                                            onPressed:
+                                                                () async {
+                                                              var modifyStatus = await controller.firebaseHelper.modifyCart(
+                                                                  snapShot.data!
+                                                                          .products[
+                                                                      index],
+                                                                  (snapShot.data!.products[index].quantity ??
+                                                                          0) -
                                                                       1,
-                                                                  borderRadius:
-                                                                      10,
-                                                                  snackStyle:
-                                                                      SnackStyle
-                                                                          .FLOATING,
-                                                                  margin:
-                                                                      const EdgeInsets
-                                                                          .all(10),
-                                                                );
-                                                              }
+                                                                  (snapShot
+                                                                          .data!
+                                                                          .products[
+                                                                              index]
+                                                                          .quantity ??
+                                                                      0));
+                                                              print(
+                                                                  "modifystatus:${modifyStatus}");
+
+                                                              // quantity > 1
+                                                              //             if (false) {
+
+                                                              //               // quantity--
+                                                              //               /* setState(() {
+                                                              //       quantity--;
+                                                              //     });
+                                                              //  */
+                                                              //             } else {
+                                                              //               Get.rawSnackbar(
+                                                              //                 message:
+                                                              //                     'Minimum order quantity is 1',
+                                                              //                 icon: const Icon(
+                                                              //                     Icons
+                                                              //                         .warning),
+                                                              //                 backgroundColor:
+                                                              //                     Colors
+                                                              //                         .orangeAccent,
+                                                              //                 snackPosition:
+                                                              //                     SnackPosition
+                                                              //                         .BOTTOM,
+                                                              //                 overlayBlur:
+                                                              //                     1,
+                                                              //                 borderRadius:
+                                                              //                     10,
+                                                              //                 snackStyle:
+                                                              //                     SnackStyle
+                                                              //                         .FLOATING,
+                                                              //                 margin:
+                                                              //                     const EdgeInsets
+                                                              //                         .all(10),
+                                                              //               );
+                                                              //             }
                                                             }),
                                                         Container(
                                                           padding:
@@ -190,7 +210,7 @@ class CartView extends GetView<CartController> {
                                                               children: [
                                                                 TextSpan(
                                                                   text:
-                                                                      '0', //'$quantity',
+                                                                      '${snapShot.data!.products[index].quantity.toString()}', //'$quantity',
                                                                   style:
                                                                       TextStyle(
                                                                     fontSize:
@@ -199,7 +219,7 @@ class CartView extends GetView<CartController> {
                                                                 ),
                                                                 TextSpan(
                                                                   text:
-                                                                      'kg', //' ${widget.metric}',
+                                                                      '${snapShot.data!.products[index].metric.toString()}', //' ${widget.metric}',
                                                                   style: GoogleFonts
                                                                       .sourceSansPro(
                                                                     fontWeight:
@@ -233,7 +253,26 @@ class CartView extends GetView<CartController> {
                                                             color: theme
                                                                 .primaryColor,
                                                           ),
-                                                          onPressed: () {
+                                                          onPressed: () async {
+                                                            var modifyStatus = await controller.firebaseHelper.modifyCart(
+                                                                snapShot.data!
+                                                                        .products[
+                                                                    index],
+                                                                (snapShot
+                                                                            .data!
+                                                                            .products[
+                                                                                index]
+                                                                            .quantity ??
+                                                                        0) +
+                                                                    1,
+                                                                (snapShot
+                                                                        .data!
+                                                                        .products[
+                                                                            index]
+                                                                        .quantity ??
+                                                                    0));
+                                                            print(
+                                                                "modifystatus:${modifyStatus}");
                                                             //quantity
                                                             // hCtrl.productQuantity(quantity + 1);
                                                             /*setState(() {

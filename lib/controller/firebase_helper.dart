@@ -99,13 +99,15 @@ class FirebaseHelper {
   }
 
   //For add to cart.
-  Future<bool> addProductToCart(CartProduct cartproduct) async {
+  Future<dynamic> addProductToCart(CartProduct cartproduct) async {
     try {
       //Before adding the product to the cart remember
       // to check the current stock with quantity requested by the user
       String? product = cartproduct.productName;
       int? quantity = cartproduct.quantity;
       bool isCartEmpty = false;
+      bool already_found = false;
+      int existingQty = 0;
       await _firestore
           .collection('Users')
           .doc(_auth.currentUser!.uid)
@@ -114,9 +116,36 @@ class FirebaseHelper {
           .then((value) {
         if (value.docs.isEmpty) {
           isCartEmpty = true;
+        } else {
+          // value.docs.items.forEach((item){
+          //   if(item.name==product){
+          //     modifyCart(cartProduct,int.parse(item.qty)+1,int.parse(item.qty)));
+          //   }
+          // });
+          var listOfDocs = value.docs;
+          for (var doc in listOfDocs) {
+            var data = doc.data();
+            var listOfCartProducts = data['items'];
+            for (var item in listOfCartProducts) {
+              if (item['name'].toString() == product) {
+                print(item['name'].toString());
+                print(item['qty']);
+                modifyCart(cartproduct, item['qty'] + 1, item['qty']);
+                already_found = true;
+                existingQty = item['qty'] + 1;
+              }
+            }
+          }
+          // for(var item in listOfProducts){
+          //    if(item.name==product){
+          //     modifyCart(cartproduct,int.parse(item.qty)+1,int.parse(item.qty));
+          //   }
+          // }
         }
       });
-
+      if (already_found) {
+        return [existingQty, true];
+      }
       if (isCartEmpty) {
         await _firestore
             .collection('Users')
@@ -130,6 +159,7 @@ class FirebaseHelper {
               'qty': quantity,
               'price': cartproduct.price,
               'metric': cartproduct.metric,
+              'img': cartproduct.img
             }
           ]),
           'amount': cartproduct.price,
@@ -155,6 +185,7 @@ class FirebaseHelper {
               'qty': quantity,
               'price': cartproduct.price,
               'metric': cartproduct.metric,
+              'img': cartproduct.img
               // 'img':cartproduct.,
             }
           ]),
@@ -162,28 +193,27 @@ class FirebaseHelper {
         });
       }
     } catch (e) {
+      print(e);
       return false;
     }
-    return true;
+    return [1, true];
   }
 
-  //
-  Future<bool> modifyCart(CartProduct cartproduct, int modifiedQuantity) async {
+  Future<bool> modifyCart(CartProduct cartproduct, int modifiedQuantity,
+      int previousQuantity) async {
     try {
       //Before adding the product to the cart remember
       // to check the current stock with quantity requested by the user.
       String? productName = cartproduct.productName;
       int? quantity = cartproduct.quantity;
-      //FETCHED CART CURRENT PRICE.
-      int currentPrice = await _firestore
+      int current_price = await _firestore
           .collection('Users')
           .doc(_auth.currentUser!.uid)
           .collection('cart')
           .doc(_auth.currentUser!.uid)
           .get()
           .then((value) => value.data()?['amount']);
-
-      /*await _firestore
+      await _firestore
           .collection('Users')
           .doc(_auth.currentUser!.uid)
           .collection('cart')
@@ -192,13 +222,13 @@ class FirebaseHelper {
         'items': FieldValue.arrayRemove([
           {
             'name': productName,
-            'qty': modifiedQuantity,
+            'qty': previousQuantity,
             'price': cartproduct.price,
-            'metric': cartproduct.metric
+            'metric': cartproduct.metric,
+            'img': cartproduct.img
           }
         ]),
-      });*/
-
+      });
       if (modifiedQuantity != 0) {
         await _firestore
             .collection('Users')
@@ -212,27 +242,96 @@ class FirebaseHelper {
               'qty': modifiedQuantity,
               'price': cartproduct.price,
               'metric': cartproduct.metric,
-            },
+              'img': cartproduct.img
+            }
           ]),
-          'amount': currentPrice -
-              (quantity ?? 0 * cartproduct.price!) +
+          'amount': current_price -
+              (previousQuantity * cartproduct.price!) +
               (modifiedQuantity * cartproduct.price!)
         });
       } else {
-        /*await _firestore
+        await _firestore
             .collection('Users')
             .doc(_auth.currentUser!.uid)
             .collection('cart')
             .doc(_auth.currentUser!.uid)
             .update({
-          'amount': currentPrice - (quantity ?? 0 * cartproduct.price!)
-        });*/
+          'amount': current_price - (previousQuantity * cartproduct.price!)
+        });
       }
     } catch (e) {
+      print(e);
       return false;
     }
     return true;
   }
+
+  //
+  // Future<bool> modifyCart(CartProduct cartproduct, int modifiedQuantity,int previousQuantity) async {
+  //   try {
+  //     //Before adding the product to the cart remember
+  //     // to check the current stock with quantity requested by the user.
+  //     String? productName = cartproduct.productName;
+  //     int? quantity = cartproduct.quantity;
+  //     //FETCHED CART CURRENT PRICE.
+  //     int currentPrice = await _firestore
+  //         .collection('Users')
+  //         .doc(_auth.currentUser!.uid)
+  //         .collection('cart')
+  //         .doc(_auth.currentUser!.uid)
+  //         .get()
+  //         .then((value) => value.data()?['amount']);
+
+  //     await _firestore
+  //         .collection('Users')
+  //         .doc(_auth.currentUser!.uid)
+  //         .collection('cart')
+  //         .doc(_auth.currentUser!.uid)
+  //         .update({
+  //       'items': FieldValue.arrayRemove([
+  //         {
+  //           'name': productName,
+  //           'qty': previousQuantity,
+  //           'price': cartproduct.price,
+  //           'metric': cartproduct.metric
+  //         }
+  //       ]),
+  //     });
+
+  //     if (modifiedQuantity != 0) {
+  //       await _firestore
+  //           .collection('Users')
+  //           .doc(_auth.currentUser!.uid)
+  //           .collection('cart')
+  //           .doc(_auth.currentUser!.uid)
+  //           .update({
+  //         'items': FieldValue.arrayUnion([
+  //           {
+  //             'name': productName,
+  //             'qty': modifiedQuantity,
+  //             'price': cartproduct.price,
+  //             'metric': cartproduct.metric,
+  //           },
+  //         ]),
+  //         'amount': currentPrice -
+  //             (quantity ?? 0 * cartproduct.price!) +
+  //             (modifiedQuantity * cartproduct.price!)
+  //       });
+  //     } else {
+  //       await _firestore
+  //           .collection('Users')
+  //           .doc(_auth.currentUser!.uid)
+  //           .collection('cart')
+  //           .doc(_auth.currentUser!.uid)
+  //           .update({
+  //         'amount': currentPrice - (quantity ?? 0 * cartproduct.price!)
+  //       });
+  //     }
+  //   } catch (e) {
+  //     return false;
+  //   }
+  //   return true;
+  // }
 
   Future<Cart?> getCart() async {
     List<CartProduct> listOfCartProducts = [];
@@ -251,11 +350,11 @@ class FirebaseHelper {
         amount = value.data()?['amount'] ?? 999;
         for (var temp in products) {
           cartProduct = CartProduct(
-            productName: temp['name'],
-            quantity: temp['qty'],
-            price: temp['price'],
-            metric: temp['metric'],
-          );
+              productName: temp['name'],
+              quantity: temp['qty'],
+              price: temp['price'],
+              metric: temp['metric'],
+              img: temp['img']);
           listOfCartProducts.add(cartProduct);
         }
       });
@@ -276,6 +375,7 @@ class FirebaseHelper {
         'qty': cartProduct.quantity,
         'price': cartProduct.price,
         'metrics': cartProduct.metric,
+        'img': cartProduct.img
       });
     }
     try {
@@ -339,8 +439,9 @@ class FirebaseHelper {
               productName: temp['name'],
               quantity: temp['qty'],
               price: temp['price'],
-              metric: temp['metric']);
-          modifyProduct(temp['name'], temp['qty']);
+              metric: temp['metric'],
+              img: temp['img']);
+          // modifyProduct(temp['name'], temp['qty']);
           listOfCartProducts?.add(cartProduct);
         }
         cart = Cart(listOfCartProducts!, amount);

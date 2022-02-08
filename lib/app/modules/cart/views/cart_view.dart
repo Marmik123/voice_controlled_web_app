@@ -37,7 +37,7 @@ class CartView extends GetView<CartController> {
             // ],
           ),
           body: SizedBox(
-            // height: 0.95.sh,
+            height: 0.95.sh,
             child: Padding(
               padding: EdgeInsets.only(top: 250.h),
               child: SingleChildScrollView(
@@ -351,7 +351,7 @@ class CartView extends GetView<CartController> {
                             ListTile(
                               hoverColor: Colors.blueGrey,
                               contentPadding: EdgeInsets.zero,
-                              leading: Text(
+                              leading: const Text(
                                 'TOTAL',
                                 style: TextStyle(
                                   fontWeight: FontWeight.w600,

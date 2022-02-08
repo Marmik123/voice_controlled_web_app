@@ -332,7 +332,6 @@ class FirebaseHelper {
   //   }
   //   return true;
   // }
-
   Future<Cart?> getCart() async {
     List<CartProduct> listOfCartProducts = [];
     List products = [];
@@ -358,7 +357,7 @@ class FirebaseHelper {
           listOfCartProducts.add(cartProduct);
         }
       });
-      // await cartCtrl.getCartTotal();
+      await cartCtrl.getCartTotal();
     } catch (e) {
       return null;
     }
@@ -534,5 +533,19 @@ class FirebaseHelper {
       return false;
     }
     return true;
+  }
+
+  Future<List<Product>> getProductsBySearch(searchTerm) async {
+    List<Product>? listOfProducts = [];
+    await _firestore.collection('Products').get().then((value) async {
+      var listOfDocs = value.docs;
+      for (var doc in listOfDocs) {
+        if (doc.id.contains(searchTerm)) {
+          Product? temp = await searchProduct(doc.id);
+          listOfProducts.add(temp!);
+        }
+      }
+    });
+    return listOfProducts;
   }
 }

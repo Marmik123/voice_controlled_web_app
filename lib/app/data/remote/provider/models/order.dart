@@ -9,13 +9,18 @@ class Order {
 }
 
 class Address {
-  String flatNumber;
-  String apartmentName;
-  String streetName;
-  int pincode;
-  String city;
-  String state;
+  String? flatNumber;
+  String? apartmentName;
+  String? streetName;
+  int? pincode;
+  String? city;
+  String? state;
 
-  Address(this.flatNumber, this.apartmentName, this.streetName, this.pincode,
-      this.city, this.state);
+  Address(
+      {this.flatNumber,
+      this.apartmentName,
+      this.streetName,
+      this.pincode,
+      this.city,
+      this.state});
 }

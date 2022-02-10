@@ -1,19 +1,24 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:get/get.dart';
+import 'package:voicewebapp/app/modules/cart/controllers/cart_controller.dart';
+import 'package:voicewebapp/app/modules/checkout/views/checkout_view.dart';
 import 'package:voicewebapp/utils/material_prop_ext.dart';
 
 Widget button({
-  Function? onPressed,
+  // Function? onPressed,
   String? btnText,
+  required CartController controller,
   double? btnWidth,
   double? cartAmount,
 }) {
   return ElevatedButton(
     onPressed: () {
-      /*setState(() {
-        cardStatus = true;
-      });*/
-      // hCtrl.addToCartButton(true);
+      controller.getCartOnCheckout();
+      Get.defaultDialog(
+        title: 'Checkout Details',
+        content: const Checkout(),
+      );
     },
     style: ButtonStyle(
       elevation: 10.0.msp,

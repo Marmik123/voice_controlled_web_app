@@ -12,10 +12,11 @@ import 'package:voicewebapp/controller/firebase_helper.dart';
 
 class HomeController extends GetxController {
   RxInt tabIndex = 1.obs;
+  // RxBool addToCartLoading = false.obs;
   Map<Widget, String> appBarItems = {
-    const Icon(Icons.home): 'Home',
+    // const Icon(Icons.home): 'Home',
     const Icon(Icons.add_shopping_cart_outlined): 'Cart',
-    const Icon(Icons.shopping_bag): 'Shop',
+    // const Icon(Icons.shopping_bag): 'Shop',
     const Icon(Icons.logout): 'Logout',
   };
 /*  Map<Icon, String> navigationRail = {

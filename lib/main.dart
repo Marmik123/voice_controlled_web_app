@@ -39,7 +39,9 @@ class MainApp extends StatelessWidget {
             debugShowCheckedModeBanner: false,
             initialRoute: Routes.SIGN_IN,
             getPages: AppPages.routes,
-            theme: ThemeData.light(),
+            theme: ThemeData().copyWith(
+              primaryColor: Colors.green,
+            ),
           );
         });
   }

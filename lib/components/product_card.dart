@@ -7,6 +7,7 @@ import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:voicewebapp/app/data/remote/provider/models/cartProduct.dart';
 import 'package:voicewebapp/app/modules/home/controllers/home_controller.dart';
+import 'package:voicewebapp/components/circular_loader.dart';
 import 'package:voicewebapp/components/sized_box.dart';
 import 'package:voicewebapp/components/snack_bar.dart';
 import 'package:voicewebapp/utils/app_colors.dart';
@@ -38,6 +39,7 @@ class _ProductCardState extends State<ProductCard> {
   int quantity = 1;
   int modifiedQuantity = 1;
   bool cardStatus = false;
+  bool addToCartLoading = false;
   HomeController hCtrl = Get.find<HomeController>();
   @override
   Widget build(BuildContext context) {
@@ -233,6 +235,9 @@ class _ProductCardState extends State<ProductCard> {
                 onPressed: () async {
                   print('onPressed Called');
                   if (quantity <= widget.currentStock!) {
+                    setState(() {
+                      addToCartLoading = true;
+                    });
                     print('product is available');
                     var addedToCart =
                         await hCtrl.firebaseHelper.addProductToCart(
@@ -250,6 +255,9 @@ class _ProductCardState extends State<ProductCard> {
                       quantity = addedToCart[0];
                       modifiedQuantity = addedToCart[0];
                       if (addedToCart[1]) {
+                        setState(() {
+                          addToCartLoading = false;
+                        });
                         appSnackbar(
                           message: 'Added To Cart Successfully',
                           snackbarState: SnackbarState.success,
@@ -270,17 +278,24 @@ class _ProductCardState extends State<ProductCard> {
                     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                     children: [
                       const Text('Add to cart'),
-                      IconButton(
-                        alignment: Alignment.center,
-                        icon: Icon(
-                          Icons.add_circle,
-                          size: 35.w,
-                          color: Colors.white,
-                        ),
-                        onPressed: () {
-                          //quantity++
-                        },
-                      ),
+                      addToCartLoading
+                          ? Padding(
+                              padding: const EdgeInsets.all(8.0),
+                              child: buildLoader(
+                                color: AppColors.kffffff,
+                              ),
+                            )
+                          : IconButton(
+                              alignment: Alignment.center,
+                              icon: Icon(
+                                Icons.add_circle,
+                                size: 35.w,
+                                color: Colors.white,
+                              ),
+                              onPressed: () {
+                                //quantity++
+                              },
+                            ),
                     ],
                   ),
                 ),

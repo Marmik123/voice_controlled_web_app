@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:voicewebapp/app/data/remote/provider/models/cart.dart';
 import 'package:voicewebapp/app/data/remote/provider/models/cartProduct.dart';
 import 'package:voicewebapp/app/data/remote/provider/models/product.dart';
 import 'package:voicewebapp/controller/firebase_helper.dart';
@@ -20,14 +21,21 @@ class CartController extends GetxController {
   TextEditingController apartMent = TextEditingController();
   RxInt cartTotal = 0.obs;
   RxBool isLoading = false.obs;
+  RxBool isOrderPlaced = false.obs;
   RxList<Product>? searchedProduct = <Product>[].obs;
   final count = 0.obs;
+  Cart? checkoutCart;
 
   Future<void> getCartTotal() async {
     isLoading(true);
     var cart = await firebaseHelper.getCart();
     cartTotal(cart?.amount);
     isLoading(false);
+  }
+
+  Future<void> getCartOnCheckout() async {
+    checkoutCart = await firebaseHelper.getCart();
+    print('CART CHECKOUT $checkoutCart');
   }
 
   Future<bool> modifyCart(CartProduct cartproduct, int modifiedQuantity,

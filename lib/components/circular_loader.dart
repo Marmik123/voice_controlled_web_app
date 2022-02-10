@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
-Widget buildLoader() {
+Widget buildLoader({Color? color}) {
   return Container(
     height: 25,
     alignment: Alignment.topLeft,
@@ -9,7 +9,7 @@ Widget buildLoader() {
     child: CircularProgressIndicator(
       strokeWidth: 1,
       valueColor: AlwaysStoppedAnimation<Color>(
-          Theme.of(Get.context!).primaryColorDark),
+          color ?? Theme.of(Get.context!).primaryColorDark),
     ),
   );
 }

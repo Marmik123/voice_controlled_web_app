@@ -7,6 +7,7 @@ import 'package:voicewebapp/app/routes/app_pages.dart';
 import 'package:voicewebapp/components/circular_loader.dart';
 import 'package:voicewebapp/components/divider.dart';
 import 'package:voicewebapp/components/elevated_button.dart';
+import 'package:voicewebapp/components/fab.dart';
 import 'package:voicewebapp/components/sized_box.dart';
 
 import '../controllers/cart_controller.dart';
@@ -18,6 +19,7 @@ class CartView extends GetView<CartController> {
     controller.getCartTotal();
     return SafeArea(
       child: Scaffold(
+          floatingActionButton: FAB(),
           appBar: AppBar(
             leading: IconButton(
               icon: const Icon(Icons.arrow_back),
@@ -395,147 +397,7 @@ class CartView extends GetView<CartController> {
                               h(height: 50.h),
                               button(
                                 btnText: 'Place Order',
-                                onPressed: () {
-                                  Get.defaultDialog(
-                                      content: Form(
-                                    key: controller.checkoutKey,
-                                    child: Container(
-                                      height: Get.height / 2,
-                                      width: Get.width / 3,
-                                      color: Colors.blueGrey.shade50,
-                                      child: Column(
-                                        children: [
-                                          ListView(
-                                            padding: EdgeInsets.all(10),
-                                            children: [
-                                              TextFormField(
-                                                controller: controller.flatNo,
-                                                decoration: InputDecoration(
-                                                  labelText:
-                                                      'Please enter flat number',
-                                                  border: OutlineInputBorder(
-                                                    borderRadius:
-                                                        BorderRadius.circular(
-                                                            10),
-                                                    borderSide: BorderSide(
-                                                        color: Colors.blueGrey),
-                                                  ),
-                                                ),
-                                                validator: (value) {
-                                                  if (value!.isEmpty) {
-                                                    return 'Please enter a flat number';
-                                                  }
-                                                  return null;
-                                                },
-                                              ),
-                                              TextFormField(
-                                                controller:
-                                                    controller.apartMent,
-                                                decoration: InputDecoration(
-                                                  labelText:
-                                                      'Please enter value',
-                                                  border: OutlineInputBorder(
-                                                    borderRadius:
-                                                        BorderRadius.circular(
-                                                            10),
-                                                    borderSide: BorderSide(
-                                                        color: Colors.blueGrey),
-                                                  ),
-                                                ),
-                                                validator: (value) {
-                                                  if (value!.isEmpty) {
-                                                    return 'Please enter a value';
-                                                  }
-                                                  return null;
-                                                },
-                                              ),
-                                              TextFormField(
-                                                controller: controller.landmark,
-                                                decoration: InputDecoration(
-                                                  labelText:
-                                                      'Please enter address',
-                                                  border: OutlineInputBorder(
-                                                    borderRadius:
-                                                        BorderRadius.circular(
-                                                            10),
-                                                    borderSide: BorderSide(
-                                                        color: Colors.blueGrey),
-                                                  ),
-                                                ),
-                                                validator: (value) {
-                                                  if (value!.isEmpty) {
-                                                    return 'Please enter a value';
-                                                  }
-                                                  return null;
-                                                },
-                                              ),
-                                              TextFormField(
-                                                controller: controller.city,
-                                                decoration: InputDecoration(
-                                                  labelText:
-                                                      'Please enter a value',
-                                                  border: OutlineInputBorder(
-                                                    borderRadius:
-                                                        BorderRadius.circular(
-                                                            10),
-                                                    borderSide: BorderSide(
-                                                        color: Colors.blueGrey),
-                                                  ),
-                                                ),
-                                                validator: (value) {
-                                                  if (value!.isEmpty) {
-                                                    return 'Please enter a value';
-                                                  }
-                                                  return null;
-                                                },
-                                              ),
-                                              TextFormField(
-                                                controller: controller.state,
-                                                decoration: InputDecoration(
-                                                  labelText:
-                                                      'Please enter a value',
-                                                  border: OutlineInputBorder(
-                                                    borderRadius:
-                                                        BorderRadius.circular(
-                                                            10),
-                                                    borderSide: BorderSide(
-                                                        color: Colors.blueGrey),
-                                                  ),
-                                                ),
-                                                validator: (value) {
-                                                  if (value!.isEmpty) {
-                                                    return 'Please enter a value';
-                                                  }
-                                                  return null;
-                                                },
-                                              ),
-                                              TextFormField(
-                                                controller: controller.pincode,
-                                                decoration: InputDecoration(
-                                                  labelText:
-                                                      'Please enter a value',
-                                                  border: OutlineInputBorder(
-                                                    borderRadius:
-                                                        BorderRadius.circular(
-                                                            10),
-                                                    borderSide: BorderSide(
-                                                        color: Colors.blueGrey),
-                                                  ),
-                                                ),
-                                                validator: (value) {
-                                                  if (value!.isEmpty) {
-                                                    return 'Please enter a value';
-                                                  }
-                                                  return null;
-                                                },
-                                              ),
-                                            ],
-                                          ),
-                                        ],
-                                      ),
-                                    ),
-                                  ));
-                                },
+                                controller: controller,
                                 // cartAmount: controller.
                               )
                             ],

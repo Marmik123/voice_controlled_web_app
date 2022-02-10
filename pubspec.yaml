@@ -19,6 +19,8 @@ dependencies:
   logger: ^1.1.0
   cloud_firestore: ^3.1.7
   google_fonts: ^2.2.0
+  flutter_sound: ^9.1.1
+  http: ^0.13.4
 
   flutter:
     sdk: flutter

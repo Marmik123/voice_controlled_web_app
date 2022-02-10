@@ -3,8 +3,6 @@ import 'package:voicewebapp/app/modules/about_us/bindings/about_us_binding.dart'
 import 'package:voicewebapp/app/modules/about_us/views/about_us_view.dart';
 import 'package:voicewebapp/app/modules/cart/bindings/cart_binding.dart';
 import 'package:voicewebapp/app/modules/cart/views/cart_view.dart';
-import 'package:voicewebapp/app/modules/checkout/bindings/checkput_binding.dart';
-import 'package:voicewebapp/app/modules/checkout/views/checkout_view.dart';
 import 'package:voicewebapp/app/modules/home/bindings/home_binding.dart';
 import 'package:voicewebapp/app/modules/home/views/home_view.dart';
 import 'package:voicewebapp/app/modules/login_screen/bindings/login_screen_binding.dart';
@@ -45,10 +43,10 @@ class AppPages {
       page: () => CartView(),
       binding: CartBinding(),
     ),
-    GetPage(
+    /*GetPage(
       name: _Paths.CHECKPUT,
       page: () => CheckoutView(),
       binding: CheckoutBinding(),
-    ),
+    ),*/
   ];
 }

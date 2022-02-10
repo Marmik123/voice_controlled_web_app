@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:get/get.dart';
 import 'package:voicewebapp/app/data/remote/provider/models/cart.dart';
 import 'package:voicewebapp/app/data/remote/provider/models/cartProduct.dart';
 import 'package:voicewebapp/app/data/remote/provider/models/order.dart';
@@ -369,9 +370,12 @@ class FirebaseHelper {
   Future<bool> checkOut(Cart cart, Address address) async {
     List<CartProduct> products = cart.products;
     int amount = cart.amount;
-    List<dynamic>? temp;
+    List<dynamic> temp = [];
+    print(cart.amount);
+    print(address.pincode);
+    print('inside checkout');
     for (var cartProduct in products) {
-      temp?.add({
+      temp.add({
         'name': cartProduct.productName,
         'qty': cartProduct.quantity,
         'price': cartProduct.price,
@@ -379,24 +383,24 @@ class FirebaseHelper {
         'img': cartProduct.img
       });
     }
+    print(temp);
     try {
       await _firestore
-          .collection('users')
+          .collection('Users')
           .doc(_auth.currentUser!.uid)
           .collection('Orders')
           .add({
-        'items': FieldValue.arrayUnion(
-            temp!),
+        'items': FieldValue.arrayUnion(temp),
         'amount': amount,
-        'address': address.flatNumber +
+        'address': address.flatNumber! +
             " " +
-            address.apartmentName +
+            address.apartmentName! +
             " " +
-            address.streetName +
+            address.streetName! +
             " " +
-            address.city +
+            address.city! +
             " " +
-            address.state +
+            address.state! +
             " Pincode:-" +
             address.pincode.toString(),
         'date': Timestamp.fromMillisecondsSinceEpoch(
@@ -407,9 +411,8 @@ class FirebaseHelper {
           .doc(_auth.currentUser!.uid)
           .collection('cart')
           .doc(_auth.currentUser!.uid)
-          .set({
-        'amount': 0,
-      });
+          .delete();
+      Get.back();
     } catch (e) {
       return false;
     }
@@ -427,7 +430,7 @@ class FirebaseHelper {
     String address;
     try {
       var listOfOrdersDocs = await _firestore
-          .collection('users')
+          .collection('Users')
           .doc(_auth.currentUser!.uid)
           .collection('Orders')
           .get()

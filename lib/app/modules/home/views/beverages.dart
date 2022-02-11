@@ -43,7 +43,7 @@ class Beverages extends GetView<HomeController> {
                             firebaseHelper.getProductsByCategory('beverages'),
                         builder: (BuildContext context,
                             AsyncSnapshot<List<Product>?> snapShot) {
-                          print('@@@$snapShot');
+                          // print('@@@$snapShot');
                           if (snapShot.connectionState ==
                               ConnectionState.waiting) {
                             return Center(child: buildLoader());

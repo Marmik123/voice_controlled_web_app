@@ -8,6 +8,8 @@ import 'package:speech_to_text/speech_recognition_result.dart';
 import 'package:speech_to_text/speech_to_text.dart';
 import 'package:voicewebapp/app/data/remote/provider/models/cartProduct.dart';
 import 'package:voicewebapp/app/data/remote/provider/models/product.dart';
+import 'package:voicewebapp/app/routes/app_pages.dart';
+import 'package:voicewebapp/components/snack_bar.dart';
 import 'package:voicewebapp/controller/firebase_helper.dart';
 
 class HomeController extends GetxController {
@@ -15,7 +17,7 @@ class HomeController extends GetxController {
   // RxBool addToCartLoading = false.obs;
   Map<Widget, String> appBarItems = {
     // const Icon(Icons.home): 'Home',
-    const Icon(Icons.add_shopping_cart_outlined): 'Cart',
+    const Icon(Icons.add_shopping_cart_outlined): 'Basket',
     // const Icon(Icons.shopping_bag): 'Shop',
     const Icon(Icons.logout): 'Logout',
   };
@@ -34,7 +36,6 @@ class HomeController extends GetxController {
   get startListening => _startListening();
   get stopListening => _stopListening();*/
   RxList<Product>? searchedResult = <Product>[].obs;
-
   RxBool speechEnabled = false.obs;
   RxString lastWords = ''.obs;
   final count = 0.obs;
@@ -45,12 +46,21 @@ class HomeController extends GetxController {
   RxBool isLoading = false.obs;
   RxBool drawerExpanded = false.obs;
   TextEditingController searchBarCtrl = TextEditingController();
+  RxString initialValue = ''.obs;
+  RxBool searchByVoice = false.obs;
+  List productList = [];
+  Map numbers = {'one': 1, 'two': 2, 'three': 3, 'four': 4, 'five': 5};
 
   @override
   void onInit() {
     super.onInit();
     // _initSpeech(); // FUNCTION TO CALL ONLY ONCE AN APP IS INITIALIZED.
     getProductsData();
+    getProductList();
+  }
+
+  void getProductList() async {
+    productList = await firebaseHelper.getProductList();
   }
 
   /// This has to happen only once per app
@@ -65,12 +75,12 @@ class HomeController extends GetxController {
   Future<void> getProductsData() async {
     isLoading(true);
     products = await firebaseHelper.getProducts();
-    print(products);
+    // print(products);
     isLoading(false);
   }
 
   Future<void> getProductsByCategory({required String category}) async {
-    print('###########categrory called');
+    // print('###########categrory called');
     isLoading(true);
     products = await firebaseHelper.getProductsByCategory(category);
     // print(products);
@@ -103,7 +113,7 @@ class HomeController extends GetxController {
   void onSpeechResult(SpeechRecognitionResult result) {
     lastWords(result.recognizedWords);
     update();
-    print('LIST OF WORDS: ${result.alternates}');
+    // print('LIST OF WORDS: ${result.alternates}');
     log(lastWords());
   }
 
@@ -122,4 +132,67 @@ class HomeController extends GetxController {
 
   @override
   void onClose() {}
+
+  Future<void> evaluateCommand(String string) async {
+    print('evaluate command');
+    List<String> words = string.toLowerCase().split(' ');
+    if (words.contains('navigate')) {
+      if (words.contains('vegetables') || words.contains('vegetable')) {
+        tabIndex(3);
+      } else if (words.contains('fruits') || words.contains('fruit')) {
+        tabIndex(4);
+      } else if (words.contains('beverages') || words.contains('beverage')) {
+        tabIndex(2);
+      } else if (words.contains('basket')) {
+        Get.toNamed(Routes.CART);
+      } else if (words.contains('home')) {
+        tabIndex(1);
+      }
+    } else if ((words.contains('log') && words.contains('out')) ||
+        (words.contains('sign') && words.contains('out')) ||
+        words.contains('signout') ||
+        words.contains('logout')) {
+      signOut();
+      Get.offAllNamed(Routes.SIGN_IN);
+    } else if (words.contains('search') || words.contains('find')) {
+      tabIndex(0);
+      searchByVoice(true);
+      initialValue(words[1]);
+      print(initialValue());
+      searchedResult!(await firebaseHelper.getProductsBySearch(initialValue));
+    } else if (words.contains('basket') && words.contains('add')) {
+      String product = '';
+      int quantity = 1;
+      for (var item in productList) {
+        if (words.contains(item)) {
+          product = item;
+          try {
+            String aStr = string.replaceAll(new RegExp(r'[^0-9]'), '');
+            quantity = int.parse(aStr);
+            print(quantity);
+          } catch (e) {
+            for (var num in numbers.keys) {
+              if (words.contains(num)) {
+                quantity = numbers[num];
+                print(quantity);
+              }
+            }
+          }
+        }
+      }
+      if (product != '') {
+        var productItem = await firebaseHelper.searchProductItem(product);
+        await firebaseHelper.addProductToCart(CartProduct(
+            productName: productItem?.name,
+            quantity: quantity,
+            metric: productItem?.metric,
+            price: productItem?.price,
+            img: productItem?.urlImage));
+        appSnackbar(message: '$product added successfully to the cart');
+        evaluateCommand('Navigate to basket');
+      } else {
+        appSnackbar(message: 'No such item exist');
+      }
+    }
+  }
 }

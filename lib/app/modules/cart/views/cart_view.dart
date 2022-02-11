@@ -19,7 +19,9 @@ class CartView extends GetView<CartController> {
     controller.getCartTotal();
     return SafeArea(
       child: Scaffold(
-          floatingActionButton: FAB(),
+          floatingActionButton: FAB(
+            controller: controller,
+          ),
           appBar: AppBar(
             leading: IconButton(
               icon: const Icon(Icons.arrow_back),
@@ -376,7 +378,7 @@ class CartView extends GetView<CartController> {
                               ListTile(
                                 hoverColor: Colors.blueGrey,
                                 contentPadding: EdgeInsets.zero,
-                                leading: Text(
+                                leading: const Text(
                                   'TOTAL',
                                   style: TextStyle(
                                     fontWeight: FontWeight.w600,
@@ -387,7 +389,7 @@ class CartView extends GetView<CartController> {
                                       ? buildLoader()
                                       : Text(
                                           '${controller.cartTotal()}',
-                                          style: TextStyle(
+                                          style: const TextStyle(
                                             fontWeight: FontWeight.w600,
                                           ),
                                         ),

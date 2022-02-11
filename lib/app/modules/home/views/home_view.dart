@@ -11,6 +11,7 @@ import 'package:voicewebapp/components/appBar_Component.dart';
 import 'package:voicewebapp/components/divider.dart';
 import 'package:voicewebapp/components/fab.dart';
 import 'package:voicewebapp/components/sized_box.dart';
+import 'package:voicewebapp/controller/firebase_helper.dart';
 import 'package:voicewebapp/utils/material_prop_ext.dart';
 
 import '../controllers/home_controller.dart';
@@ -23,9 +24,10 @@ class HomeView extends GetView<HomeController> {
 
   @override
   Widget build(BuildContext context) {
+    FirebaseHelper firebaseHelper = FirebaseHelper();
     final theme = Theme.of(context);
     return Scaffold(
-      floatingActionButton: FAB(),
+      floatingActionButton: FAB(controller: controller),
       appBar: AppBar(
         leading: Container(),
         toolbarHeight: 70,
@@ -34,12 +36,17 @@ class HomeView extends GetView<HomeController> {
         elevation: 5,
         title: Row(
           children: [
-            Text(
-              "Voice Controlled Web App",
-              style: TextStyle(
-                color: theme.colorScheme.secondary,
-                fontSize: 120.sp,
-                fontWeight: FontWeight.w500,
+            GestureDetector(
+              onTap: () async {
+                await firebaseHelper.seeding();
+              },
+              child: Text(
+                "Voice Controlled Web App",
+                style: TextStyle(
+                  color: theme.colorScheme.secondary,
+                  fontSize: 120.sp,
+                  fontWeight: FontWeight.w500,
+                ),
               ),
             ),
             //SEARCH PRODUCT.
@@ -92,7 +99,7 @@ class HomeView extends GetView<HomeController> {
                   color: theme.primaryColor,
                   onPressed: () {
                     switch (appBarItem.value) {
-                      case 'Cart':
+                      case 'Basket':
                         Get.toNamed(Routes.CART);
                         break;
                       case 'Logout':

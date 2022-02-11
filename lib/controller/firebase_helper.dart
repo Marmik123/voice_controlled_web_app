@@ -81,7 +81,7 @@ class FirebaseHelper {
       await _firestore.collection('Products').get().then((querySnapShot) {
         for (var temp in querySnapShot.docs) {
           docData = temp.data();
-          print(docData);
+          // print(docData);
           product = Product(
             name: docData['name'],
             category: docData['category'],
@@ -91,7 +91,7 @@ class FirebaseHelper {
             metric: docData['metric'],
           );
           products.add(product);
-          print('inside firebase helper $products');
+          // print('inside firebase helper $products');
         }
       });
     } catch (e) {
@@ -100,9 +100,22 @@ class FirebaseHelper {
     return products;
   }
 
+  Future<List> getProductList() async {
+    List listOfProducts = [];
+    List docs = await _firestore
+        .collection('Products')
+        .get()
+        .then((value) => value.docs);
+    for (var doc in docs) {
+      listOfProducts.add(doc.id.toString());
+    }
+    return listOfProducts;
+  }
+
   //For add to cart.
   Future<dynamic> addProductToCart(CartProduct cartproduct) async {
     try {
+      print(cartproduct.toString());
       //Before adding the product to the cart remember
       // to check the current stock with quantity requested by the user
       String? product = cartproduct.productName;
@@ -130,19 +143,15 @@ class FirebaseHelper {
             var listOfCartProducts = data['items'];
             for (var item in listOfCartProducts) {
               if (item['name'].toString() == product) {
-                print(item['name'].toString());
-                print(item['qty']);
-                modifyCart(cartproduct, item['qty'] + 1, item['qty']);
+                // print(item['name'].toString());
+                // print(item['qty']);
+                modifyCart(cartproduct, item['qty'] + cartproduct.quantity,
+                    item['qty']);
                 already_found = true;
-                existingQty = item['qty'] + 1;
+                existingQty = item['qty'] + cartproduct.quantity;
               }
             }
           }
-          // for(var item in listOfProducts){
-          //    if(item.name==product){
-          //     modifyCart(cartproduct,int.parse(item.qty)+1,int.parse(item.qty));
-          //   }
-          // }
         }
       });
       if (already_found) {
@@ -164,7 +173,7 @@ class FirebaseHelper {
               'img': cartproduct.img
             }
           ]),
-          'amount': cartproduct.price,
+          'amount': (cartproduct.price! * quantity!),
         });
       } else {
         //THIS IS USED ONLY WHEN THERE IS PRODUCT INSIDE THE CART.
@@ -268,6 +277,18 @@ class FirebaseHelper {
     return true;
   }
 
+  Future<bool> clearCart() async {
+    await _firestore
+        .collection('Users')
+        .doc(_auth.currentUser!.uid)
+        .collection('cart')
+        .doc(_auth.currentUser!.uid)
+        .set(<String, dynamic>{
+      'items': [],
+      'amount': 0,
+    });
+    return true;
+  }
   //
   // Future<bool> modifyCart(CartProduct cartproduct, int modifiedQuantity,int previousQuantity) async {
   //   try {
@@ -383,7 +404,7 @@ class FirebaseHelper {
         'img': cartProduct.img
       });
     }
-    print(temp);
+    // print(temp);
     try {
       await _firestore
           .collection('Users')
@@ -499,6 +520,37 @@ class FirebaseHelper {
     }
 
     return searchedProduct;
+  }
+
+  Future<Product?> searchProductItem(String productName) async {
+    Product? resultantProduct;
+
+    try {
+      var docData = await _firestore
+          .collection('Products')
+          .doc(productName)
+          .get()
+          .then((value) => value.data());
+
+      if (docData != null) {
+        resultantProduct = Product(
+            name: docData['name'],
+            category: docData['category'],
+            currentStock: docData['current_stock'],
+            urlImage: docData['image_url'],
+            price: docData['price'],
+            metric: docData['metric']);
+      } else {
+        print('docData is null');
+        appSnackbar(
+            message: 'Item Not found', snackbarState: SnackbarState.warning);
+      }
+    } catch (e) {
+      appSnackbar(
+          message: 'Error occured: $e', snackbarState: SnackbarState.warning);
+    }
+
+    return resultantProduct;
   }
 
   //for search by vegetables,fruits.

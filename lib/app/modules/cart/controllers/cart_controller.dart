@@ -5,6 +5,7 @@ import 'package:get/get.dart';
 import 'package:voicewebapp/app/data/remote/provider/models/cart.dart';
 import 'package:voicewebapp/app/data/remote/provider/models/cartProduct.dart';
 import 'package:voicewebapp/app/data/remote/provider/models/product.dart';
+import 'package:voicewebapp/components/snack_bar.dart';
 import 'package:voicewebapp/controller/firebase_helper.dart';
 
 class CartController extends GetxController {
@@ -110,5 +111,16 @@ class CartController extends GetxController {
     // TODO: implement update
     getCartTotal();
     super.update(ids, condition);
+  }
+
+  void evaluateCommand(String command) async {
+    List words = command.split(' ');
+    if (words.contains('empty') || words.contains('clear')) {
+      isLoading(true);
+      await firebaseHelper.clearCart();
+      appSnackbar(message: 'Cart is cleared');
+      update();
+      isLoading(false);
+    } else if (words.contains('check') && words.contains('out')) {}
   }
 }

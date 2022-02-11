@@ -4,13 +4,10 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_sound/flutter_sound.dart';
 import 'package:get/get.dart';
 import 'package:http/http.dart' as http;
+import 'dart:convert';
 
-class FAB extends StatefulWidget {
-  const FAB({Key? key}) : super(key: key);
-
-  @override
-  _FABState createState() => _FABState();
-}
+import 'package:voicewebapp/app/modules/home/controllers/home_controller.dart';
+import 'package:voicewebapp/components/snack_bar.dart';
 
 enum micState {
   start,
@@ -20,11 +17,21 @@ enum micState {
 
 late FlutterSoundRecorder recorder;
 
+class FAB extends StatefulWidget {
+  final dynamic controller;
+  const FAB({this.controller});
+
+  @override
+  _FABState createState() => _FABState();
+}
+
 class _FABState extends State<FAB> {
   dynamic? bytes;
   String? path;
   late micState buttonState;
   RxBool recordStart = true.obs;
+  // var hCtrl = Get.find<HomeController>();
+
   @override
   void initState() {
     // TODO: implement initState
@@ -53,6 +60,57 @@ class _FABState extends State<FAB> {
             tooltip: 'Listen',
             child: micBtn(micState.start),
           ));
+  }
+
+  Future<void> sendBytesToServer(dynamic bytes) async {
+    try {
+      final response =
+          await http.post(Uri.parse('http://127.0.0.1:5000/processaudio'),
+              headers: {
+                'Content-Type': 'application/json',
+                "Access-Control-Allow-Origin":
+                    "*", // Required for CORS support to work
+                "Access-Control-Allow-Headers":
+                    "Origin,Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token,locale",
+                "Access-Control-Allow-Methods": "POST"
+              },
+              body: jsonEncode(
+                <String, dynamic>{
+                  'audioBytes': bytes,
+                },
+              ));
+      if (response.statusCode == 200) {
+        Map result = jsonDecode(response.body);
+        if (!result['error']) {
+          print('responseResult:${result['response']}');
+          widget.controller.evaluateCommand(result['response']);
+          // widget.controller.evaluateCommand('Add 5 watermelon to the basket');
+        } else {
+          appSnackbar(message: 'Command not recognized.');
+        }
+      } else {
+        print('statusCode:${response.statusCode}');
+      }
+    } catch (e) {
+      appSnackbar(message: 'Something went wrong,Please try again.');
+      print(e);
+    }
+  }
+
+  void onRecord() async {
+    print('inside record');
+    await recorder.openRecorder();
+    await recorder.startRecorder(toFile: 'foo');
+    print(Codec.defaultCodec);
+  }
+
+  void onStop() async {
+    print('ONSTOP');
+    var path = await recorder.stopRecorder();
+    final result = await http.get(Uri.parse(path!));
+    var bytes = result.bodyBytes;
+    // print(bytes);
+    sendBytesToServer(bytes);
   }
 }
 
@@ -85,39 +143,4 @@ Widget micBtn(
         child: const Icon(Icons.mic),
       );
   }
-}
-/*
-void sendBytesToServer(int bytes) async {
-  final response =
-      await http.post(Uri.parse('http://127.0.0.1:5000/processaudio'),
-          headers: {
-            'Content-Type': 'application/json',
-            "Access-Control-Allow-Origin":
-                "*", // Required for CORS support to work
-            "Access-Control-Allow-Headers":
-                "Origin,Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token,locale",
-            "Access-Control-Allow-Methods": "POST"
-          },
-          body: jsonEncode(
-            <String, dynamic>{
-              'audioBytes': bytes,
-            },
-          ));
-  print(response.body);
-}*/
-
-void onRecord() async {
-  print('inside record');
-  await recorder.openRecorder();
-  await recorder.startRecorder(toFile: 'foo');
-  print(Codec.defaultCodec);
-}
-
-void onStop() async {
-  print('ONSTOP');
-  var path = await recorder.stopRecorder();
-  final result = await http.get(Uri.parse(path!));
-  var bytes = result.bodyBytes;
-  print(bytes);
-// sendBytesToServer();
 }

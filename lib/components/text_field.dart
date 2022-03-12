@@ -84,12 +84,12 @@ Widget textField({
               filled: true,
               hintText: hintText,
               enabled: true,
-              prefixIcon:  const FittedBox(
-                      fit: BoxFit.scaleDown,
-                      child: Icon(
-                        Icons.search,
-                      ),
-                    ),
+              prefixIcon: const FittedBox(
+                fit: BoxFit.scaleDown,
+                child: Icon(
+                  Icons.search,
+                ),
+              ),
               hintStyle: hintStyle,
               //prefixText: prefixText,
               prefixStyle: TextStyle(

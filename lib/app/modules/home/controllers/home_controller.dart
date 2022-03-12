@@ -110,10 +110,8 @@ class HomeController extends GetxController {
   //FUNCTION FOR SIGN OUT && Delete the shared preference data from localS.
   Future<String> signOut() async {
     await _auth.signOut();
-
     SharedPreferences prefs = await SharedPreferences.getInstance();
     prefs.setBool('auth', false);
-
     /*uid = null;
     userEmail = null;*/
 

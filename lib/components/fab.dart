@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:avatar_glow/avatar_glow.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -86,7 +88,7 @@ Widget micBtn(
       );
   }
 }
-/*
+
 void sendBytesToServer(int bytes) async {
   final response =
       await http.post(Uri.parse('http://127.0.0.1:5000/processaudio'),
@@ -104,7 +106,7 @@ void sendBytesToServer(int bytes) async {
             },
           ));
   print(response.body);
-}*/
+}
 
 void onRecord() async {
   print('inside record');

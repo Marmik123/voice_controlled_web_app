@@ -20,7 +20,7 @@ class SearchByName extends GetView<HomeController> {
     return Scaffold(
       body: Padding(
         padding: const EdgeInsets.all(15.0),
-        child: Column(
+        child: Column (
           //  mainAxisAlignment: MainAxisAlignment.start,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [

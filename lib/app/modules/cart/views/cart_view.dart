@@ -1,3 +1,5 @@
+import 'dart:ui';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
@@ -18,400 +20,400 @@ class CartView extends GetView<CartController> {
     final theme = Theme.of(context);
     controller.getCartTotal();
     return SafeArea(
-      child: Scaffold(
-          floatingActionButton: FAB(
-            controller: controller,
-          ),
-          appBar: AppBar(
-            leading: IconButton(
-              icon: const Icon(Icons.arrow_back),
-              onPressed: () {
-                // Get.back();
-                Get.offAndToNamed(Routes.HOME);
-              },
-            ),
-            title: const Text('Your Cart'),
-            // actions: [
-            //   IconButton(
-            //     icon: Icon(Icons.home),
-            //     onPressed: () {
-            //       Get.offAndToNamed(Routes.HOME);
-            //     },
-            //   )
-            // ],
-          ),
-          body: SizedBox(
-            height: 0.95.sh,
-            child: Padding(
-              padding: EdgeInsets.only(top: 250.h),
-              child: SingleChildScrollView(
-                scrollDirection: Axis.horizontal,
-                child: GetBuilder<CartController>(
-                  init: CartController(),
-                  builder: (context) => Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      w(width: 40.w),
-                      SizedBox(
-                        width: Get.width * 0.65, //0.65.sw,
-                        height: Get.height, // 0.80.sh,
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                          children: [
-                            h(height: 20.h),
-                            Expanded(
-                              child: FutureBuilder(
-                                future: controller.firebaseHelper.getCart(),
-                                builder: (BuildContext context,
-                                    AsyncSnapshot<Cart?> snapShot) {
-                                  if (snapShot.connectionState ==
-                                      ConnectionState.waiting) {
-                                    return Center(child: buildLoader());
-                                  } else if (snapShot.hasData) {
-                                    if (snapShot.data!.products.isNotEmpty) {
-                                      return SingleChildScrollView(
-                                        physics: const ClampingScrollPhysics(),
-                                        child: Column(
-                                          crossAxisAlignment:
-                                              CrossAxisAlignment.start,
-                                          children: [
-                                            Row(
-                                              mainAxisAlignment:
-                                                  MainAxisAlignment
-                                                      .spaceBetween,
-                                              children: [
-                                                Text(
-                                                  'Cart',
-                                                  style: TextStyle(
-                                                    fontWeight: FontWeight.w700,
-                                                    fontSize: 125.sp,
-                                                  ),
-                                                ),
-                                                // Text(
-                                                //   'Total: ${snapShot.data!.amount.toString()}',
-                                                //   style: TextStyle(
-                                                //     fontSize: 80.sp,
-                                                //     fontWeight: FontWeight.w700,
-                                                //   ),
-                                                // ),
-                                              ],
-                                            ),
-                                            buildDivider(),
-                                            ListView.separated(
-                                              itemBuilder: (context, index) {
-                                                return SizedBox(
-                                                  height: 0.15.sh,
-                                                  width: 0.25.sw,
-                                                  child: ListTile(
-                                                    contentPadding:
-                                                        EdgeInsets.only(
-                                                            top: 50.h),
-                                                    tileColor: Colors.white24,
-                                                    leading: Image.network(
-                                                        snapShot.data!
-                                                            .products[index].img
-                                                            .toString()),
-                                                    title: Text(snapShot
-                                                        .data!
-                                                        .products[index]
-                                                        .productName
-                                                        .toString()),
-                                                    subtitle: Row(
-                                                      children: [
-                                                        Text(
-                                                            'Rs. ${snapShot.data!.products[index].price}/${snapShot.data!.products[index].metric}'),
-                                                        w(width: 25.w),
-                                                        Text(
-                                                            'Quantity. ${snapShot.data!.products[index].quantity}'),
-                                                      ],
+        child: Scaffold(
+      floatingActionButton: FAB(
+        controller: controller,
+      ),
+      appBar: AppBar(
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back),
+          onPressed: () {
+            // Get.back();
+            Get.offAndToNamed(Routes.HOME);
+          },
+        ),
+        title: const Text('Your Cart'),
+        // actions: [
+        //   IconButton(
+        //     icon: Icon(Icons.home),
+        //     onPressed: () {
+        //       Get.offAndToNamed(Routes.HOME);
+        //     },
+        //   )
+        // ],
+      ),
+      body: Obx(() => controller.isLoading()
+          ? Center(child: buildLoader())
+          : SizedBox(
+              height: 0.95.sh,
+              child: Padding(
+                padding: EdgeInsets.only(top: 250.h),
+                child: SingleChildScrollView(
+                  scrollDirection: Axis.horizontal,
+                  child: GetBuilder<CartController>(
+                    init: CartController(),
+                    builder: (context) => Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        w(width: 40.w),
+                        SizedBox(
+                          width: Get.width * 0.65, //0.65.sw,
+                          height: Get.height, // 0.80.sh,
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                            children: [
+                              h(height: 20.h),
+                              Expanded(
+                                child: FutureBuilder(
+                                  future: controller.firebaseHelper.getCart(),
+                                  builder: (BuildContext context,
+                                      AsyncSnapshot<Cart?> snapShot) {
+                                    if (snapShot.connectionState ==
+                                        ConnectionState.waiting) {
+                                      return Center(child: buildLoader());
+                                    } else if (snapShot.hasData) {
+                                      if (snapShot.data!.products.isNotEmpty) {
+                                        return SingleChildScrollView(
+                                          physics:
+                                              const ClampingScrollPhysics(),
+                                          child: Column(
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.start,
+                                            children: [
+                                              Row(
+                                                mainAxisAlignment:
+                                                    MainAxisAlignment
+                                                        .spaceBetween,
+                                                children: [
+                                                  Text(
+                                                    'Cart',
+                                                    style: TextStyle(
+                                                      fontWeight:
+                                                          FontWeight.w700,
+                                                      fontSize: 125.sp,
                                                     ),
-                                                    trailing: Padding(
-                                                      padding:
-                                                          const EdgeInsets.all(
-                                                              8.0),
-                                                      child: FittedBox(
-                                                        child: Row(
-                                                          mainAxisSize:
-                                                              MainAxisSize.max,
-                                                          mainAxisAlignment:
-                                                              MainAxisAlignment
-                                                                  .spaceAround,
-                                                          children: [
-                                                            IconButton(
-                                                                hoverColor:
-                                                                    Colors
-                                                                        .white,
+                                                  ),
+                                                  // Text(
+                                                  //   'Total: ${snapShot.data!.amount.toString()}',
+                                                  //   style: TextStyle(
+                                                  //     fontSize: 80.sp,
+                                                  //     fontWeight: FontWeight.w700,
+                                                  //   ),
+                                                  // ),
+                                                ],
+                                              ),
+                                              buildDivider(),
+                                              ListView.separated(
+                                                itemBuilder: (context, index) {
+                                                  return SizedBox(
+                                                    height: 0.15.sh,
+                                                    width: 0.25.sw,
+                                                    child: ListTile(
+                                                      contentPadding:
+                                                          EdgeInsets.only(
+                                                              top: 50.h),
+                                                      tileColor: Colors.white24,
+                                                      leading: Image.network(
+                                                          snapShot
+                                                              .data!
+                                                              .products[index]
+                                                              .img
+                                                              .toString()),
+                                                      title: Text(snapShot
+                                                          .data!
+                                                          .products[index]
+                                                          .productName
+                                                          .toString()),
+                                                      subtitle: Row(
+                                                        children: [
+                                                          Text(
+                                                              'Rs. ${snapShot.data!.products[index].price}/${snapShot.data!.products[index].metric}'),
+                                                          w(width: 25.w),
+                                                          Text(
+                                                              'Quantity. ${snapShot.data!.products[index].quantity}'),
+                                                        ],
+                                                      ),
+                                                      trailing: Padding(
+                                                        padding:
+                                                            const EdgeInsets
+                                                                .all(8.0),
+                                                        child: FittedBox(
+                                                          child: Row(
+                                                            mainAxisSize:
+                                                                MainAxisSize
+                                                                    .max,
+                                                            mainAxisAlignment:
+                                                                MainAxisAlignment
+                                                                    .spaceAround,
+                                                            children: [
+                                                              IconButton(
+                                                                  hoverColor:
+                                                                      Colors
+                                                                          .white,
+                                                                  alignment:
+                                                                      Alignment
+                                                                          .center,
+                                                                  icon: Icon(
+                                                                    Icons
+                                                                        .remove_circle,
+                                                                    size: 95.r,
+                                                                    color: snapShot.data!.products[index].quantity ==
+                                                                            1
+                                                                        ? Colors
+                                                                            .grey
+                                                                        : theme
+                                                                            .primaryColor,
+                                                                  ),
+                                                                  onPressed:
+                                                                      () async {
+                                                                    var modifyStatus = await controller.firebaseHelper.modifyCart(
+                                                                        snapShot.data!.products[
+                                                                            index],
+                                                                        (snapShot.data!.products[index].quantity ??
+                                                                                0) -
+                                                                            1,
+                                                                        (snapShot.data!.products[index].quantity ??
+                                                                            0));
+                                                                    print(
+                                                                        "modifystatus:${modifyStatus}");
+                                                                    // quantity > 1
+                                                                    //             if (false) {
+
+                                                                    //               // quantity--
+                                                                    //               /* setState(() {
+                                                                    //       quantity--;
+                                                                    //     });
+                                                                    //  */
+                                                                    //             } else {
+                                                                    //               Get.rawSnackbar(
+                                                                    //                 message:
+                                                                    //                     'Minimum order quantity is 1',
+                                                                    //                 icon: const Icon(
+                                                                    //                     Icons
+                                                                    //                         .warning),
+                                                                    //                 backgroundColor:
+                                                                    //                     Colors
+                                                                    //                         .orangeAccent,
+                                                                    //                 snackPosition:
+                                                                    //                     SnackPosition
+                                                                    //                         .BOTTOM,
+                                                                    //                 overlayBlur:
+                                                                    //                     1,
+                                                                    //                 borderRadius:
+                                                                    //                     10,
+                                                                    //                 snackStyle:
+                                                                    //                     SnackStyle
+                                                                    //                         .FLOATING,
+                                                                    //                 margin:
+                                                                    //                     const EdgeInsets
+                                                                    //                         .all(10),
+                                                                    //               );
+                                                                    //             }
+                                                                    controller
+                                                                        .update();
+                                                                  }),
+                                                              Container(
+                                                                padding:
+                                                                    const EdgeInsets
+                                                                        .all(8),
+                                                                decoration:
+                                                                    BoxDecoration(
+                                                                  border: Border
+                                                                      .all(
+                                                                    color: Colors
+                                                                        .grey,
+                                                                    width: 10.r,
+                                                                  ),
+                                                                ),
+                                                                child: RichText(
+                                                                  overflow:
+                                                                      TextOverflow
+                                                                          .ellipsis,
+                                                                  maxLines: 1,
+                                                                  text:
+                                                                      TextSpan(
+                                                                    children: [
+                                                                      TextSpan(
+                                                                        text:
+                                                                            '${snapShot.data!.products[index].quantity.toString()}', //'$quantity',
+                                                                        style:
+                                                                            TextStyle(
+                                                                          fontSize:
+                                                                              65.sp,
+                                                                        ),
+                                                                      ),
+                                                                      TextSpan(
+                                                                        text:
+                                                                            '${snapShot.data!.products[index].metric.toString()}', //' ${widget.metric}',
+                                                                        style: GoogleFonts
+                                                                            .sourceSansPro(
+                                                                          fontWeight:
+                                                                              FontWeight.bold,
+                                                                          fontSize:
+                                                                              45.sp,
+                                                                        ),
+                                                                      ),
+                                                                    ],
+                                                                    style: GoogleFonts
+                                                                        .sourceSansPro(
+                                                                      color: const Color(
+                                                                          0xff000000),
+                                                                      fontWeight:
+                                                                          FontWeight
+                                                                              .bold,
+                                                                      fontSize:
+                                                                          35.sp,
+                                                                    ),
+                                                                  ),
+                                                                  textAlign:
+                                                                      TextAlign
+                                                                          .center,
+                                                                ),
+                                                              ),
+                                                              IconButton(
                                                                 alignment:
                                                                     Alignment
                                                                         .center,
                                                                 icon: Icon(
                                                                   Icons
-                                                                      .remove_circle,
+                                                                      .add_circle,
                                                                   size: 95.r,
-                                                                  color: snapShot
-                                                                              .data!
-                                                                              .products[
-                                                                                  index]
-                                                                              .quantity ==
-                                                                          1
-                                                                      ? Colors
-                                                                          .grey
-                                                                      : theme
-                                                                          .primaryColor,
+                                                                  color: theme
+                                                                      .primaryColor,
                                                                 ),
                                                                 onPressed:
                                                                     () async {
-                                                                  var modifyStatus = await controller.firebaseHelper.modifyCart(
+                                                                  var modifyStatus = await controller.modifyCart(
                                                                       snapShot.data!
                                                                               .products[
                                                                           index],
                                                                       (snapShot.data!.products[index].quantity ??
-                                                                              0) -
+                                                                              0) +
                                                                           1,
                                                                       (snapShot
                                                                               .data!
                                                                               .products[index]
                                                                               .quantity ??
                                                                           0));
-                                                                  print(
-                                                                      "modifystatus:${modifyStatus}");
-                                                                  // quantity > 1
-                                                                  //             if (false) {
-
-                                                                  //               // quantity--
-                                                                  //               /* setState(() {
-                                                                  //       quantity--;
-                                                                  //     });
-                                                                  //  */
-                                                                  //             } else {
-                                                                  //               Get.rawSnackbar(
-                                                                  //                 message:
-                                                                  //                     'Minimum order quantity is 1',
-                                                                  //                 icon: const Icon(
-                                                                  //                     Icons
-                                                                  //                         .warning),
-                                                                  //                 backgroundColor:
-                                                                  //                     Colors
-                                                                  //                         .orangeAccent,
-                                                                  //                 snackPosition:
-                                                                  //                     SnackPosition
-                                                                  //                         .BOTTOM,
-                                                                  //                 overlayBlur:
-                                                                  //                     1,
-                                                                  //                 borderRadius:
-                                                                  //                     10,
-                                                                  //                 snackStyle:
-                                                                  //                     SnackStyle
-                                                                  //                         .FLOATING,
-                                                                  //                 margin:
-                                                                  //                     const EdgeInsets
-                                                                  //                         .all(10),
-                                                                  //               );
-                                                                  //             }
                                                                   controller
                                                                       .update();
-                                                                }),
-                                                            Container(
-                                                              padding:
-                                                                  const EdgeInsets
-                                                                      .all(8),
-                                                              decoration:
-                                                                  BoxDecoration(
-                                                                border:
-                                                                    Border.all(
-                                                                  color: Colors
-                                                                      .grey,
-                                                                  width: 10.r,
-                                                                ),
-                                                              ),
-                                                              child: RichText(
-                                                                overflow:
-                                                                    TextOverflow
-                                                                        .ellipsis,
-                                                                maxLines: 1,
-                                                                text: TextSpan(
-                                                                  children: [
-                                                                    TextSpan(
-                                                                      text:
-                                                                          '${snapShot.data!.products[index].quantity.toString()}', //'$quantity',
-                                                                      style:
-                                                                          TextStyle(
-                                                                        fontSize:
-                                                                            65.sp,
-                                                                      ),
-                                                                    ),
-                                                                    TextSpan(
-                                                                      text:
-                                                                          '${snapShot.data!.products[index].metric.toString()}', //' ${widget.metric}',
-                                                                      style: GoogleFonts
-                                                                          .sourceSansPro(
-                                                                        fontWeight:
-                                                                            FontWeight.bold,
-                                                                        fontSize:
-                                                                            45.sp,
-                                                                      ),
-                                                                    ),
-                                                                  ],
-                                                                  style: GoogleFonts
-                                                                      .sourceSansPro(
-                                                                    color: const Color(
-                                                                        0xff000000),
-                                                                    fontWeight:
-                                                                        FontWeight
-                                                                            .bold,
-                                                                    fontSize:
-                                                                        35.sp,
-                                                                  ),
-                                                                ),
-                                                                textAlign:
-                                                                    TextAlign
-                                                                        .center,
-                                                              ),
-                                                            ),
-                                                            IconButton(
-                                                              alignment:
-                                                                  Alignment
-                                                                      .center,
-                                                              icon: Icon(
-                                                                Icons
-                                                                    .add_circle,
-                                                                size: 95.r,
-                                                                color: theme
-                                                                    .primaryColor,
-                                                              ),
-                                                              onPressed:
-                                                                  () async {
-                                                                var modifyStatus = await controller.modifyCart(
-                                                                    snapShot.data!
-                                                                            .products[
-                                                                        index],
-                                                                    (snapShot.data!.products[index].quantity ??
-                                                                            0) +
-                                                                        1,
-                                                                    (snapShot
-                                                                            .data!
-                                                                            .products[index]
-                                                                            .quantity ??
-                                                                        0));
-                                                                controller
-                                                                    .update();
-                                                                print(
-                                                                    "modifystatus:${modifyStatus}");
-                                                                //quantity
-                                                                // hCtrl.productQuantity(quantity + 1);
-                                                                /*setState(() {
+                                                                  print(
+                                                                      "modifystatus:${modifyStatus}");
+                                                                  //quantity
+                                                                  // hCtrl.productQuantity(quantity + 1);
+                                                                  /*setState(() {
                                                           quantity++;
                                                         });*/
-                                                              },
-                                                            ),
-                                                          ],
+                                                                },
+                                                              ),
+                                                            ],
+                                                          ),
                                                         ),
                                                       ),
                                                     ),
-                                                  ),
-                                                );
-                                              },
-                                              itemCount: snapShot
-                                                  .data!.products.length,
-                                              shrinkWrap: true,
-                                              physics:
-                                                  const ClampingScrollPhysics(),
-                                              padding: EdgeInsets.zero,
-                                              separatorBuilder:
-                                                  (BuildContext context,
-                                                          int index) =>
-                                                      buildDivider(
-                                                          leftIndent: 2,
-                                                          rightIndent: 5),
-                                            ),
-                                          ],
-                                        ),
-                                      );
+                                                  );
+                                                },
+                                                itemCount: snapShot
+                                                    .data!.products.length,
+                                                shrinkWrap: true,
+                                                physics:
+                                                    const ClampingScrollPhysics(),
+                                                padding: EdgeInsets.zero,
+                                                separatorBuilder:
+                                                    (BuildContext context,
+                                                            int index) =>
+                                                        buildDivider(
+                                                            leftIndent: 2,
+                                                            rightIndent: 5),
+                                              ),
+                                            ],
+                                          ),
+                                        );
+                                      } else {
+                                        return const Center(
+                                          child: Text('No item exist'),
+                                        );
+                                      }
                                     } else {
                                       return const Center(
                                         child: Text('No item exist'),
                                       );
                                     }
-                                  } else {
-                                    return const Center(
-                                      child: Text('No item exist'),
-                                    );
-                                  }
-                                },
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                      w(width: 60.w),
-                      Container(
-                        width: Get.width * 0.25, //0.25.sw,
-                        height: Get.height * 0.50, //0.50.sh,
-                        // alignment: Alignment.,
-                        decoration: BoxDecoration(
-                          boxShadow: [
-                            BoxShadow(
-                              spreadRadius: 3.r,
-                              color: Colors.grey,
-                              offset: const Offset(7, 7),
-                              blurRadius: 100.r,
-                            ),
-                          ],
-                          borderRadius: BorderRadius.circular(15.r),
-                          color: Colors.white,
-                        ),
-                        child: Padding(
-                          padding: const EdgeInsets.all(18.0),
-                          child: Column(
-                            // mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(
-                                'Payment Details',
-                                style: TextStyle(
-                                  fontWeight: FontWeight.w700,
-                                  fontSize: 125.sp,
+                                  },
                                 ),
                               ),
-                              ListTile(
-                                hoverColor: Colors.blueGrey,
-                                contentPadding: EdgeInsets.zero,
-                                leading: const Text(
-                                  'TOTAL',
-                                  style: TextStyle(
-                                    fontWeight: FontWeight.w600,
-                                  ),
-                                ),
-                                trailing: Obx(
-                                  () => controller.isLoading()
-                                      ? buildLoader()
-                                      : Text(
-                                          '${controller.cartTotal()}',
-                                          style: const TextStyle(
-                                            fontWeight: FontWeight.w600,
-                                          ),
-                                        ),
-                                ),
-                                // mainAxisAlignment: MainAxisAlignment.start,
-                              ),
-                              h(height: 50.h),
-                              button(
-                                btnText: 'Place Order',
-                                controller: controller,
-                                // cartAmount: controller.
-                              )
                             ],
                           ),
                         ),
-                      ),
-                    ],
+                        w(width: 60.w),
+                        Container(
+                          width: Get.width * 0.25, //0.25.sw,
+                          height: Get.height * 0.50, //0.50.sh,
+                          // alignment: Alignment.,
+                          decoration: BoxDecoration(
+                            boxShadow: [
+                              BoxShadow(
+                                spreadRadius: 3.r,
+                                color: Colors.grey,
+                                offset: const Offset(7, 7),
+                                blurRadius: 100.r,
+                              ),
+                            ],
+                            borderRadius: BorderRadius.circular(15.r),
+                            color: Colors.white,
+                          ),
+                          child: Padding(
+                            padding: const EdgeInsets.all(18.0),
+                            child: Column(
+                              // mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  'Payment Details',
+                                  style: TextStyle(
+                                    fontWeight: FontWeight.w700,
+                                    fontSize: 125.sp,
+                                  ),
+                                ),
+                                ListTile(
+                                  hoverColor: Colors.blueGrey,
+                                  contentPadding: EdgeInsets.zero,
+                                  leading: const Text(
+                                    'TOTAL',
+                                    style: TextStyle(
+                                      fontWeight: FontWeight.w600,
+                                    ),
+                                  ),
+                                  trailing: Obx(
+                                    () => controller.isLoading()
+                                        ? buildLoader()
+                                        : Text(
+                                            '${controller.cartTotal()}',
+                                            style: const TextStyle(
+                                              fontWeight: FontWeight.w600,
+                                            ),
+                                          ),
+                                  ),
+                                  // mainAxisAlignment: MainAxisAlignment.start,
+                                ),
+                                h(height: 50.h),
+                                button(
+                                  btnText: 'Place Order',
+                                  controller: controller,
+                                  // cartAmount: controller.
+                                )
+                              ],
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
                   ),
                 ),
               ),
-            ),
-          )),
-    );
+            )),
+    ));
   }
 }

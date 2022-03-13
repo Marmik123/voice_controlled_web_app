@@ -163,7 +163,6 @@ class _CheckoutState extends State<Checkout> {
                                 snackbarState: SnackbarState.success);
                           } else {
                             Get.back();
-
                             appSnackbar(
                                 message: 'Something went wrong',
                                 snackbarState: SnackbarState.warning);

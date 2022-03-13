@@ -1,5 +1,6 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_tts/flutter_tts.dart';
 import 'package:get/get.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:speech_to_text/speech_to_text.dart';
@@ -25,9 +26,9 @@ class HomeController extends GetxController {
     const Icon(Icons.contact_mail): 'Food Grains',
   };*/
   final FirebaseAuth _auth = FirebaseAuth.instance;
-
+  FlutterTts tts = FlutterTts();
+  RxBool evaluatingCommand = false.obs;
   final SpeechToText speechToText = SpeechToText();
-
   RxList<Product>? searchedResult = <Product>[].obs;
   RxBool speechEnabled = false.obs;
   RxString lastWords = ''.obs;
@@ -49,6 +50,7 @@ class HomeController extends GetxController {
     super.onInit();
     // _initSpeech(); // FUNCTION TO CALL ONLY ONCE AN APP IS INITIALIZED.
     getProductsData();
+    initializeTTS(); //TEXT TO SPEECH.
     // getProductList();
   }
 
@@ -123,20 +125,35 @@ class HomeController extends GetxController {
     return 'User signed out';
   }
 
+  Future<void> initializeTTS() async {
+    await tts.awaitSpeakCompletion(true);
+    await tts.setLanguage("en-US");
+    await tts.setSpeechRate(0.45);
+    await tts.setVolume(1.0);
+  }
+
   Future<void> evaluateCommand(String string) async {
     print('evaluate command');
+    if (evaluatingCommand()) {
+      tts.speak('Evaluating Command');
+    }
     List<String> words = string.toLowerCase().split(' ');
     print('THIS IS WORDS $words');
     if (words.contains('navigate')) {
       if (words.contains('vegetables') || words.contains('vegetable')) {
         tabIndex(3);
+        tts.speak('Navigating to Vegetable,please wait.');
       } else if (words.contains('fruits') || words.contains('fruit')) {
         tabIndex(4);
+        tts.speak('Navigating to fruits,please wait.');
       } else if (words.contains('beverages') || words.contains('beverage')) {
         tabIndex(2);
+        tts.speak('Navigating to beverages,please wait.');
       } else if (words.contains('basket')) {
         Get.toNamed(Routes.CART);
+        tts.speak('Navigating to basket,please wait.');
       } else if (words.contains('home')) {
+        tts.speak('Navigating to home,please wait.');
         tabIndex(1);
       }
     } else if ((words.contains('log') && words.contains('out')) ||
@@ -144,12 +161,14 @@ class HomeController extends GetxController {
         words.contains('signout') ||
         words.contains('logout')) {
       signOut();
+      tts.speak('Signing out,please wait.');
       Get.offAllNamed(Routes.SIGN_IN);
     } else if (words.contains('search') || words.contains('find')) {
       tabIndex(0);
       searchByVoice(true);
       initialValue(words[1]);
       print(initialValue());
+      tts.speak('Finding ${words[1]},please wait.');
       searchedResult!(await firebaseHelper.getProductsBySearch(initialValue));
     } else if (words.contains('basket') && words.contains('add')) {
       String product = '';
@@ -158,6 +177,7 @@ class HomeController extends GetxController {
         print("REFERENCE PRODUCT LIST :${item.name}");
         if (words.contains(item.name)) {
           product = item.name!;
+          tts.speak('Adding ${item.name} to the cart,please wait.');
           print("PRODUCT IS :$product");
           try {
             String aStr = string.replaceAll(new RegExp(r'[^0-9]'), '');
@@ -183,13 +203,22 @@ class HomeController extends GetxController {
             price: productItem?.price,
             img: productItem?.urlImage));
         appSnackbar(message: '$product added successfully to the cart');
+        tts.speak('${productItem!.name} added successfully to the cart');
         update();
         evaluateCommand('Navigate to basket');
       } else {
         appSnackbar(message: 'No such item exist');
       }
     } else {
+      tts.speak('Command not recognized, Please try again');
       appSnackbar(message: 'Command not recognized, Please try again');
     }
+  }
+
+  @override
+  void dispose() {
+    // TODO: implement dispose
+    super.dispose();
+    tts.stop();
   }
 }

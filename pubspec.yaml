@@ -21,6 +21,7 @@ dependencies:
   google_fonts: ^2.2.0
   flutter_sound: ^9.1.1
   http: ^0.13.4
+  flutter_tts: ^3.3.3
 
   flutter:
     sdk: flutter

@@ -20,14 +20,14 @@ class SearchByName extends GetView<HomeController> {
     return Scaffold(
       body: Padding(
         padding: const EdgeInsets.all(15.0),
-        child: Column (
+        child: Column(
           //  mainAxisAlignment: MainAxisAlignment.start,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Row(
               children: [
                 Text(
-                  'Searched Product Here',
+                  'Search Product Here',
                   style: TextStyle(
                     color: theme.colorScheme.secondary,
                     fontSize: 100.sp,
@@ -37,71 +37,144 @@ class SearchByName extends GetView<HomeController> {
                   overflow: TextOverflow.ellipsis,
                 ),
                 w(width: 15.w),
-                textField(
-                  initialValue: '',
-                  controller: controller.searchBarCtrl,
-                  prefixText: '',
-                  hintText: 'Search',
-                  onTap: () {
-                    // controller.tabIndex(0);
-                  },
-                  context: context,
-                  height: 150.h,
-                  width: 200.w,
-                  suffixIcon: controller.searchBarCtrl.text.trim().isEmpty
-                      ? const SizedBox.shrink()
-                      : IconButton(
-                          color: AppColors.k6886A0,
-                          //padding: const EdgeInsets.only(top: 15),
-                          alignment: Alignment.center,
-                          iconSize: 60.r,
-                          tooltip: 'Clear Text',
-                          splashRadius: 1,
-                          icon: const Icon(
-                            Icons.clear,
-                          ),
-                          onPressed: () {
-                            controller.searchBarCtrl.clear();
+                Obx(
+                  () => controller.searchByVoice()
+                      ? textField(
+                          key: Key(controller.initialValue().toString()),
+                          initialValue: controller.initialValue(),
+                          enableInitialValue: true,
+                          prefixText: '',
+                          hintText: 'Search',
+                          onTap: () {
+                            // controller.tabIndex(0);
                           },
-                        ),
-                  textAction: TextInputAction.search,
-                  keyBoardType: TextInputType.text,
-                  textStyle: TextStyle(
-                    color: AppColors.k6886A0,
-                    fontWeight: FontWeight.w500,
-                    fontStyle: FontStyle.normal,
-                    fontFamily: 'Gilroy',
-                    fontSize: 60.sp,
-                  ),
-                  hintStyle: TextStyle(
-                    color: AppColors.k6886A0,
-                    fontWeight: FontWeight.w500,
-                    fontStyle: FontStyle.normal,
-                    fontFamily: 'Gilroy',
-                    fontSize: 60.sp,
-                  ),
-                  contentPadding: EdgeInsets.only(top: 26.h),
-                  /* onChanged: (value) async {
-                    controller.isLoading(true);
-                    controller.searchedProduct!(await controller.firebaseHelper
-                        .getProductsBySearch(
-                            controller.searchBarCtrl.text.trim()));
-                    controller.isLoading(false);
-                  },*/
-                  onFieldSubmitted: (value) async {
-                    if (value.isNotEmpty) {
+                          context: context,
+                          height: 150.h,
+                          width: 200.w,
+                          suffixIcon:
+                              controller.searchBarCtrl.text.trim().isEmpty
+                                  ? const SizedBox.shrink()
+                                  : IconButton(
+                                      color: AppColors.k6886A0,
+                                      //padding: const EdgeInsets.only(top: 15),
+                                      alignment: Alignment.center,
+                                      iconSize: 60.r,
+                                      tooltip: 'Clear Text',
+                                      splashRadius: 1,
+                                      icon: const Icon(
+                                        Icons.clear,
+                                      ),
+                                      onPressed: () {
+                                        controller.searchBarCtrl.clear();
+                                      },
+                                    ),
+                          textAction: TextInputAction.search,
+                          keyBoardType: TextInputType.text,
+                          textStyle: TextStyle(
+                            color: AppColors.k6886A0,
+                            fontWeight: FontWeight.w500,
+                            fontStyle: FontStyle.normal,
+                            fontFamily: 'Gilroy',
+                            fontSize: 60.sp,
+                          ),
+                          hintStyle: TextStyle(
+                            color: AppColors.k6886A0,
+                            fontWeight: FontWeight.w500,
+                            fontStyle: FontStyle.normal,
+                            fontFamily: 'Gilroy',
+                            fontSize: 60.sp,
+                          ),
+                          contentPadding: EdgeInsets.only(top: 26.h),
+                          /* onChanged: (value) async {
                       controller.isLoading(true);
-                      // controller.isSearched(true);
-                      // controller.isLoading(true);
-                      controller.searchedResult!(await controller.firebaseHelper
+                      controller.searchedProduct!(await controller.firebaseHelper
                           .getProductsBySearch(
                               controller.searchBarCtrl.text.trim()));
                       controller.isLoading(false);
+                    },*/
+                          onFieldSubmitted: (value) async {
+                            if (value.isNotEmpty) {
+                              controller.isLoading(true);
+                              // controller.isSearched(true);
+                              // controller.isLoading(true);
+                              controller.searchedResult!(await controller
+                                  .firebaseHelper
+                                  .getProductsBySearch(
+                                      controller.searchBarCtrl.text.trim()));
+                              controller.isLoading(false);
 
-                      // if (value.trim().isEmpty) {
-                      //   controller.isSearched(false);
-                    }
-                  },
+                              // if (value.trim().isEmpty) {
+                              //   controller.isSearched(false);
+                            }
+                          },
+                        )
+                      : textField(
+                          controller: controller.searchBarCtrl,
+                          prefixText: '',
+                          hintText: 'Search',
+                          onTap: () {
+                            // controller.tabIndex(0);
+                          },
+                          context: context,
+                          height: 150.h,
+                          width: 200.w,
+                          suffixIcon:
+                              controller.searchBarCtrl.text.trim().isEmpty
+                                  ? const SizedBox.shrink()
+                                  : IconButton(
+                                      color: AppColors.k6886A0,
+                                      //padding: const EdgeInsets.only(top: 15),
+                                      alignment: Alignment.center,
+                                      iconSize: 60.r,
+                                      tooltip: 'Clear Text',
+                                      splashRadius: 1,
+                                      icon: const Icon(
+                                        Icons.clear,
+                                      ),
+                                      onPressed: () {
+                                        controller.searchBarCtrl.clear();
+                                      },
+                                    ),
+                          textAction: TextInputAction.search,
+                          keyBoardType: TextInputType.text,
+                          textStyle: TextStyle(
+                            color: AppColors.k6886A0,
+                            fontWeight: FontWeight.w500,
+                            fontStyle: FontStyle.normal,
+                            fontFamily: 'Gilroy',
+                            fontSize: 60.sp,
+                          ),
+                          hintStyle: TextStyle(
+                            color: AppColors.k6886A0,
+                            fontWeight: FontWeight.w500,
+                            fontStyle: FontStyle.normal,
+                            fontFamily: 'Gilroy',
+                            fontSize: 60.sp,
+                          ),
+                          contentPadding: EdgeInsets.only(top: 26.h),
+                          /* onChanged: (value) async {
+                      controller.isLoading(true);
+                      controller.searchedProduct!(await controller.firebaseHelper
+                          .getProductsBySearch(
+                              controller.searchBarCtrl.text.trim()));
+                      controller.isLoading(false);
+                    },*/
+                          onFieldSubmitted: (value) async {
+                            if (value.isNotEmpty) {
+                              controller.isLoading(true);
+                              // controller.isSearched(true);
+                              // controller.isLoading(true);
+                              controller.searchedResult!(await controller
+                                  .firebaseHelper
+                                  .getProductsBySearch(
+                                      controller.searchBarCtrl.text.trim()));
+                              controller.isLoading(false);
+
+                              // if (value.trim().isEmpty) {
+                              //   controller.isSearched(false);
+                            }
+                          },
+                        ),
                 ),
               ],
             ),

@@ -5,6 +5,7 @@ import 'package:get/get.dart';
 import 'package:voicewebapp/app/data/remote/provider/models/cart.dart';
 import 'package:voicewebapp/app/data/remote/provider/models/cartProduct.dart';
 import 'package:voicewebapp/app/data/remote/provider/models/product.dart';
+import 'package:voicewebapp/components/snack_bar.dart';
 import 'package:voicewebapp/controller/firebase_helper.dart';
 
 class CartController extends GetxController {
@@ -24,7 +25,7 @@ class CartController extends GetxController {
   RxBool isOrderPlaced = false.obs;
   RxList<Product>? searchedProduct = <Product>[].obs;
   final count = 0.obs;
-  Cart? checkoutCart;
+  Cart? cartDetails;
 
   Future<void> getCartTotal() async {
     isLoading(true);
@@ -33,9 +34,12 @@ class CartController extends GetxController {
     isLoading(false);
   }
 
-  Future<void> getCartOnCheckout() async {
-    checkoutCart = await firebaseHelper.getCart();
-    print('CART CHECKOUT $checkoutCart');
+  Future<void> getCartDetails() async {
+    print('CART DETAILS CALLLEDF');
+    cartDetails = await firebaseHelper.getCart();
+    // print(cartDetails!.products[0].productName);
+    // cartDetails = await firebaseHelper.getCart();
+    // print('CART CHECKOUT ${cartDetails!.products}');
   }
 
   Future<bool> modifyCart(CartProduct cartproduct, int modifiedQuantity,
@@ -52,6 +56,7 @@ class CartController extends GetxController {
           .doc(_auth.currentUser!.uid)
           .get()
           .then((value) => value.data()?['amount']);
+
       await _firestore
           .collection('Users')
           .doc(_auth.currentUser!.uid)
@@ -110,5 +115,34 @@ class CartController extends GetxController {
     // TODO: implement update
     getCartTotal();
     super.update(ids, condition);
+  }
+
+  Future<void> removeItem(itemToBeRemoved) async {
+    await firebaseHelper.removeParticularItem(itemToBeRemoved);
+  }
+
+  void evaluateCommand(String command) async {
+    List words = command.split(' ');
+    if (words.contains('empty') || words.contains('clear')) {
+      if (words.contains('cart') || words.contains('basket')) {
+        isLoading(true);
+        await firebaseHelper.clearCart();
+        isLoading(false);
+        appSnackbar(
+          message: 'Cart is cleared',
+          snackbarState: SnackbarState.success,
+        );
+        update();
+      }
+    } else if (words.contains('check') && words.contains('out')) {
+    } else if (words.contains('remove')) {
+      await getCartDetails();
+      for (var item in cartDetails!.products) {
+        print('THIS IS UNDER REMOVE :$item');
+        if (words.contains(item.productName)) {
+          await modifyCart(item, 0, item.quantity!);
+          update();
+        }
+      }
   }
 }

@@ -47,12 +47,13 @@ class _ProductCardState extends State<ProductCard> {
       padding: const EdgeInsets.all(5),
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(5),
-        gradient: const LinearGradient(
+        /*gradient: const LinearGradient(
           colors: [
             AppColors.kproductCard1,
-            AppColors.kproductCard2,
+            // AppColors.kproductCard2,
           ],
-        ),
+        ),*/
+        color: AppColors.kDFDFDF,
       ),
       width: 120.w,
       height: 700.h,

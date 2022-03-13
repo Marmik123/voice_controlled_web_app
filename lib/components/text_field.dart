@@ -4,6 +4,7 @@ import 'package:get/get_utils/src/get_utils/get_utils.dart';
 import 'package:voicewebapp/utils/app_colors.dart';
 
 Widget textField({
+  Key? key,
   required BuildContext context,
   required double height,
   required double width,
@@ -55,6 +56,7 @@ Widget textField({
         child: Form(
           key: formKey,
           child: TextFormField(
+            key: key,
             onChanged: onChanged,
             textAlignVertical: TextAlignVertical.center,
             controller: enableInitialValue! ? null : controller,

@@ -3,7 +3,7 @@ import 'package:voicewebapp/app/data/remote/provider/models/product.dart';
 class Data {
   List<Product> listOfProducts = [];
   Product tomatoes = Product(
-    name: 'tomato',
+    name: 'tomatoes',
     category: 'vegetables',
     urlImage:
         'https://images.freeimages.com/images/small-previews/7d8/tomato-making-salsa-5-1558689.jpg',
@@ -13,7 +13,7 @@ class Data {
   );
 
   Product onions = Product(
-    name: 'onion',
+    name: 'onions',
     category: 'vegetables',
     urlImage:
         'https://images.freeimages.com/images/small-previews/e05/onions-1171785.jpg',
@@ -23,7 +23,7 @@ class Data {
   );
 
   Product potatoes = Product(
-    name: 'potato',
+    name: 'potatoes',
     category: 'vegetables',
     urlImage:
         'https://images.freeimages.com/images/small-previews/ee6/patatas-1-1576320.jpg',
@@ -33,7 +33,7 @@ class Data {
   );
 
   Product cucumbers = Product(
-    name: 'cucumber',
+    name: 'cucumbers',
     category: 'vegetables',
     urlImage:
         'https://images.freeimages.com/images/small-previews/cc2/cucumber-1502107.jpg',
@@ -43,7 +43,7 @@ class Data {
   );
 
   Product beetroot = Product(
-    name: 'beetroot',
+    name: 'beetroots',
     category: 'vegetables',
     urlImage:
         'https://images.freeimages.com/images/small-previews/a39/vegetables-1-1320310.jpg',
@@ -53,7 +53,7 @@ class Data {
   );
 
   Product apple = Product(
-    name: 'apple',
+    name: 'apples',
     category: 'fruits',
     urlImage:
         'https://images.freeimages.com/images/small-previews/2b3/apple-1179663.jpg',
@@ -63,7 +63,7 @@ class Data {
   );
 
   Product orange = Product(
-    name: 'orange',
+    name: 'oranges',
     category: 'fruits',
     urlImage:
         'https://images.freeimages.com/images/small-previews/f40/oranges-1325500.jpg',
@@ -73,7 +73,7 @@ class Data {
   );
 
   Product banana = Product(
-    name: 'banana',
+    name: 'bananas',
     category: 'fruits',
     urlImage:
         'https://images.freeimages.com/images/small-previews/4ec/banana-s-1326714.jpg',
@@ -83,7 +83,7 @@ class Data {
   );
 
   Product watermelon = Product(
-    name: 'watermelon',
+    name: 'watermelons',
     category: 'fruits',
     urlImage:
         'https://images.freeimages.com/images/small-previews/98c/watermelon-1506864.jpg',
@@ -93,7 +93,7 @@ class Data {
   );
 
   Product kiwi = Product(
-    name: 'kiwi',
+    name: 'kiwis',
     category: 'fruits',
     urlImage:
         'https://images.freeimages.com/images/small-previews/d24/kiwi-1524179.jpg',

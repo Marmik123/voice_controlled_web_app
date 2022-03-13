@@ -14,7 +14,7 @@ Widget button({
 }) {
   return ElevatedButton(
     onPressed: () {
-      controller.getCartOnCheckout();
+      controller.getCartDetails();
       Get.defaultDialog(
         title: 'Checkout Details',
         content: const Checkout(),

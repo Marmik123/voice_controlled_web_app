@@ -144,7 +144,7 @@ class _CheckoutState extends State<Checkout> {
                           // controller.isOrderPlaced(true);
                           bool orderStatus =
                               await controller.firebaseHelper.checkOut(
-                            controller.checkoutCart!,
+                            controller.cartDetails!,
                             Address(
                               flatNumber: controller.flatNo.text.trim(),
                               apartmentName: controller.apartMent.text.trim(),

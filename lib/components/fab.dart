@@ -6,10 +6,13 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_sound/flutter_sound.dart';
 import 'package:get/get.dart';
 import 'package:http/http.dart' as http;
+import 'package:voicewebapp/components/snack_bar.dart';
 
 class FAB extends StatefulWidget {
-  const FAB({Key? key}) : super(key: key);
+  // const FAB({Key? key}) : super(key: key);
+  final controller;
 
+  const FAB({Key? key, this.controller}) : super(key: key);
   @override
   _FABState createState() => _FABState();
 }
@@ -27,6 +30,7 @@ class _FABState extends State<FAB> {
   String? path;
   late micState buttonState;
   RxBool recordStart = true.obs;
+
   @override
   void initState() {
     // TODO: implement initState
@@ -43,7 +47,7 @@ class _FABState extends State<FAB> {
               onRecord();
               recordStart(false);
             },
-            tooltip: 'Listen',
+            tooltip: 'Start Listening',
             child: micBtn(micState.stop),
           )
         : FloatingActionButton(
@@ -52,9 +56,61 @@ class _FABState extends State<FAB> {
               recordStart(true);
               // print(recordStart());
             },
-            tooltip: 'Listen',
+            tooltip: 'Stop Listening',
             child: micBtn(micState.start),
           ));
+  }
+
+  Future<void> sendBytesToServer(dynamic bytes) async {
+    print("SENDING BYTES CALLED");
+    try {
+      final response =
+          await http.post(Uri.parse('http://127.0.0.1:5000/processaudio'),
+              headers: {
+                'Content-Type': 'application/json',
+                "Access-Control-Allow-Origin":
+                    "*", // Required for CORS support to work
+                "Access-Control-Allow-Headers":
+                    "Origin,Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token,locale",
+                "Access-Control-Allow-Methods": "POST"
+              },
+              body: jsonEncode(
+                <String, dynamic>{
+                  'audioBytes': bytes,
+                },
+              ));
+      if (response.statusCode == 200) {
+        Map result = jsonDecode(response.body);
+        if (!result['error']) {
+          print('responseResult:${result['response']}');
+          widget.controller.evaluateCommand(result['response']);
+          // widget.controller.evaluateCommand('Add 5 watermelon to the basket');
+        } else {
+          appSnackbar(message: 'Command not recognized.');
+        }
+      } else {
+        print('statusCode:${response.statusCode}');
+      }
+    } catch (e) {
+      appSnackbar(message: 'Something went wrong,Please try again.');
+      print(e);
+    }
+  }
+
+  void onRecord() async {
+    print('inside record');
+    await recorder.openRecorder();
+    await recorder.startRecorder(toFile: 'foo');
+    print(Codec.defaultCodec);
+  }
+
+  void onStop() async {
+    print('ONSTOP');
+    var path = await recorder.stopRecorder();
+    final result = await http.get(Uri.parse(path!));
+    var bytes = result.bodyBytes;
+    // print(bytes);
+    sendBytesToServer(bytes);
   }
 }
 
@@ -87,39 +143,4 @@ Widget micBtn(
         child: const Icon(Icons.mic),
       );
   }
-}
-
-void sendBytesToServer(int bytes) async {
-  final response =
-      await http.post(Uri.parse('http://127.0.0.1:5000/processaudio'),
-          headers: {
-            'Content-Type': 'application/json',
-            "Access-Control-Allow-Origin":
-                "*", // Required for CORS support to work
-            "Access-Control-Allow-Headers":
-                "Origin,Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token,locale",
-            "Access-Control-Allow-Methods": "POST"
-          },
-          body: jsonEncode(
-            <String, dynamic>{
-              'audioBytes': bytes,
-            },
-          ));
-  print(response.body);
-}
-
-void onRecord() async {
-  print('inside record');
-  await recorder.openRecorder();
-  await recorder.startRecorder(toFile: 'foo');
-  print(Codec.defaultCodec);
-}
-
-void onStop() async {
-  print('ONSTOP');
-  var path = await recorder.stopRecorder();
-  final result = await http.get(Uri.parse(path!));
-  var bytes = result.bodyBytes;
-  print(bytes);
-// sendBytesToServer();
 }

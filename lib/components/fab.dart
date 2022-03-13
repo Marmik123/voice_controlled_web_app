@@ -84,7 +84,6 @@ class _FABState extends State<FAB> {
         if (!result['error']) {
           print('responseResult:${result['response']}');
           widget.controller.evaluateCommand(result['response']);
-          // widget.controller.evaluateCommand('Add 5 watermelon to the basket');
         } else {
           appSnackbar(message: 'Command not recognized.');
         }

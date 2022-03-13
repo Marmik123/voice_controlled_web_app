@@ -145,15 +145,15 @@ class _CheckoutState extends State<Checkout> {
                           bool orderStatus =
                               await controller.firebaseHelper.checkOut(
                             controller.cartDetails!,
-                            Address(
-                              flatNumber: controller.flatNo.text.trim(),
-                              apartmentName: controller.apartMent.text.trim(),
-                              city: controller.city.text.trim(),
-                              pincode:
-                                  int.parse(controller.pincode.text.trim()),
-                              state: controller.state.text.trim(),
-                              streetName: controller.landmark.text.trim(),
-                            ),
+                            // Address(
+                            //   flatNumber: controller.flatNo.text.trim(),
+                            //   apartmentName: controller.apartMent.text.trim(),
+                            //   city: controller.city.text.trim(),
+                            //   pincode:
+                            //       int.parse(controller.pincode.text.trim()),
+                            //   state: controller.state.text.trim(),
+                            //   streetName: controller.landmark.text.trim(),
+                            // ),
                           );
                           print('ORDER STATUS:$orderStatus');
                           if (orderStatus) {

@@ -403,12 +403,14 @@ class FirebaseHelper {
     });
   }
 
-  Future<bool> checkOut(Cart cart, Address address) async {
+  Future<bool> checkOut(
+    Cart cart,
+  ) async {
     List<CartProduct> products = cart.products;
     int amount = cart.amount;
     List<dynamic> temp = [];
     print(cart.amount);
-    print(address.pincode);
+    // print(address.pincode);
     print('inside checkout');
     for (var cartProduct in products) {
       temp.add({
@@ -428,17 +430,17 @@ class FirebaseHelper {
           .add({
         'items': FieldValue.arrayUnion(temp),
         'amount': amount,
-        'address': address.flatNumber! +
-            " " +
-            address.apartmentName! +
-            " " +
-            address.streetName! +
-            " " +
-            address.city! +
-            " " +
-            address.state! +
-            " Pincode:-" +
-            address.pincode.toString(),
+        // 'address': address.flatNumber! +
+        //     " " +
+        //     address.apartmentName! +
+        //     " " +
+        //     address.streetName! +
+        //     " " +
+        //     address.city! +
+        //     " " +
+        //     address.state! +
+        //     " Pincode:-" +
+        //     address.pincode.toString(),
         'date': Timestamp.fromMillisecondsSinceEpoch(
             DateTime.now().millisecondsSinceEpoch)
       });

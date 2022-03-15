@@ -7,6 +7,7 @@ import 'package:voicewebapp/app/data/remote/provider/models/order.dart';
 import 'package:voicewebapp/app/data/remote/provider/models/product.dart';
 import 'package:voicewebapp/app/data/remote/provider/models/user.dart';
 import 'package:voicewebapp/components/snack_bar.dart';
+
 import 'package:voicewebapp/seed/seed.dart';
 
 final _firestore = FirebaseFirestore.instance;
@@ -110,7 +111,6 @@ class FirebaseHelper {
       bool isCartEmpty = false;
       bool already_found = false;
       int existingQty = 0;
-
       await _firestore
           .collection('Users')
           .doc(_auth.currentUser!.uid)
@@ -131,10 +131,9 @@ class FirebaseHelper {
             var listOfCartProducts = data['items'];
             for (var item in listOfCartProducts) {
               if (item['name'].toString() == product) {
-                // print(item['name'].toString());
-                // print(item['qty']);
-                modifyCart(cartproduct, item['qty'] + cartproduct.quantity,
-                    item['qty']);
+                print(item['name'].toString());
+                print(item['qty']);
+                modifyCart(cartproduct, item['qty'] + 1, item['qty']);
                 already_found = true;
                 existingQty = item['qty'] + cartproduct.quantity;
               }
@@ -166,7 +165,7 @@ class FirebaseHelper {
               'img': cartproduct.img
             }
           ]),
-          'amount': (cartproduct.price! * quantity!),
+          'amount': cartproduct.price,
         });
       } else {
         //THIS IS USED ONLY WHEN THERE IS PRODUCT INSIDE THE CART.
@@ -270,18 +269,6 @@ class FirebaseHelper {
     return true;
   }
 
-  Future<bool> clearCart() async {
-    var response = await _firestore
-        .collection('Users')
-        .doc(_auth.currentUser!.uid)
-        .collection('cart')
-        .doc(_auth.currentUser!.uid)
-        .set(<String, dynamic>{
-      'items': [],
-      'amount': 0,
-    });
-    return true;
-  }
   //
   // Future<bool> modifyCart(CartProduct cartproduct, int modifiedQuantity,int previousQuantity) async {
   //   try {
@@ -366,12 +353,11 @@ class FirebaseHelper {
         amount = value.data()?['amount'] ?? 999;
         for (var temp in products) {
           cartProduct = CartProduct(
-            productName: temp['name'],
-            quantity: temp['qty'],
-            price: temp['price'],
-            metric: temp['metric'],
-            img: temp['img'],
-          );
+              productName: temp['name'],
+              quantity: temp['qty'],
+              price: temp['price'],
+              metric: temp['metric'],
+              img: temp['img']);
           listOfCartProducts.add(cartProduct);
         }
       });
@@ -382,36 +368,12 @@ class FirebaseHelper {
     return Cart(listOfCartProducts, amount!);
   }
 
-  //FOR REMOVING THROUGH VOICE COMMAND.
-  Future<void> removeParticularItem(CartProduct itemToBeRemoved) async {
-    print(itemToBeRemoved.productName);
-    await _firestore
-        .collection('Users')
-        .doc(_auth.currentUser!.uid)
-        .collection('cart')
-        .doc(_auth.currentUser!.uid)
-        .update({
-      'items': FieldValue.arrayRemove([
-        {
-          'name': itemToBeRemoved.productName,
-          'qty': 0,
-          /*'price': cartproduct.price,
-          'metric': cartproduct.metric,
-          'img': cartproduct.img*/
-        }
-      ]),
-    });
-  }
-
   Future<bool> checkOut(Cart cart, Address address) async {
     List<CartProduct> products = cart.products;
     int amount = cart.amount;
-    List<dynamic> temp = [];
-    print(cart.amount);
-    print(address.pincode);
-    print('inside checkout');
+    List<dynamic>? temp;
     for (var cartProduct in products) {
-      temp.add({
+      temp?.add({
         'name': cartProduct.productName,
         'qty': cartProduct.quantity,
         'price': cartProduct.price,
@@ -419,7 +381,6 @@ class FirebaseHelper {
         'img': cartProduct.img
       });
     }
-    // print(temp);
     try {
       await _firestore
           .collection('Users')
@@ -502,10 +463,9 @@ class FirebaseHelper {
     return Orders;
   }
 
-  Future<List<Product>?> searchProduct(String productName) async {
-    List<Product>? searchedProduct = [];
+  //TODO:ROMIL's
+  Future<Product?> searchProduct(String productName) async {
     Product? resultantProduct;
-
     try {
       var docData = await _firestore
           .collection('Products')
@@ -521,7 +481,7 @@ class FirebaseHelper {
             urlImage: docData['image_url'],
             price: docData['price'],
             metric: docData['metric']);
-        searchedProduct.add(resultantProduct);
+        // searchedProduct.add(resultantProduct);
       } else {
         print('docData is null');
         appSnackbar(
@@ -531,10 +491,10 @@ class FirebaseHelper {
       appSnackbar(
           message: 'Error occured: $e', snackbarState: SnackbarState.warning);
 
-      return [];
+      return null;
     }
 
-    return searchedProduct;
+    return resultantProduct;
   }
 
   Future<Product?> searchProductItem(String productName) async {

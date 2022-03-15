@@ -7,7 +7,6 @@ import 'package:voicewebapp/app/data/remote/provider/models/order.dart';
 import 'package:voicewebapp/app/data/remote/provider/models/product.dart';
 import 'package:voicewebapp/app/data/remote/provider/models/user.dart';
 import 'package:voicewebapp/components/snack_bar.dart';
-
 import 'package:voicewebapp/seed/seed.dart';
 
 final _firestore = FirebaseFirestore.instance;
@@ -387,7 +386,7 @@ class FirebaseHelper {
           .doc(_auth.currentUser!.uid)
           .collection('Orders')
           .add({
-        'items': FieldValue.arrayUnion(temp),
+        'items': FieldValue.arrayUnion(temp!),
         'amount': amount,
         'address': address.flatNumber! +
             " " +
@@ -463,9 +462,10 @@ class FirebaseHelper {
     return Orders;
   }
 
-  //TODO:ROMIL's
-  Future<Product?> searchProduct(String productName) async {
+  Future<List<Product>?> searchProduct(String productName) async {
+    List<Product>? searchedProduct = [];
     Product? resultantProduct;
+
     try {
       var docData = await _firestore
           .collection('Products')
@@ -481,7 +481,7 @@ class FirebaseHelper {
             urlImage: docData['image_url'],
             price: docData['price'],
             metric: docData['metric']);
-        // searchedProduct.add(resultantProduct);
+        searchedProduct.add(resultantProduct);
       } else {
         print('docData is null');
         appSnackbar(
@@ -491,10 +491,10 @@ class FirebaseHelper {
       appSnackbar(
           message: 'Error occured: $e', snackbarState: SnackbarState.warning);
 
-      return null;
+      return [];
     }
 
-    return resultantProduct;
+    return searchedProduct;
   }
 
   Future<Product?> searchProductItem(String productName) async {
@@ -526,6 +526,19 @@ class FirebaseHelper {
     }
 
     return resultantProduct;
+  }
+
+  Future<bool> clearCart() async {
+    var response = await _firestore
+        .collection('Users')
+        .doc(_auth.currentUser!.uid)
+        .collection('cart')
+        .doc(_auth.currentUser!.uid)
+        .set(<String, dynamic>{
+      'items': [],
+      'amount': 0,
+    });
+    return true;
   }
 
   //for search by vegetables,fruits.

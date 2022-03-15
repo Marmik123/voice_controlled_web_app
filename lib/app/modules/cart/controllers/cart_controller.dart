@@ -126,10 +126,6 @@ class CartController extends GetxController {
     super.update(ids, condition);
   }
 
-  Future<void> removeItem(itemToBeRemoved) async {
-    await firebaseHelper.removeParticularItem(itemToBeRemoved);
-  }
-
   Future<void> initializeTTS() async {
     await tts.awaitSpeakCompletion(true);
     await tts.setLanguage("en-US");

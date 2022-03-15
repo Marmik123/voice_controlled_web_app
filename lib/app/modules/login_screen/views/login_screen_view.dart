@@ -172,7 +172,7 @@ class LoginScreenView extends GetView<LoginScreenController> {
                             );*/
                           },
                           child: const Text(
-                            'New Register? Sign Up',
+                            'New User? Sign Up',
                             style: TextStyle(
                               color: AppColors.k00474E,
                               fontWeight: FontWeight.w500,

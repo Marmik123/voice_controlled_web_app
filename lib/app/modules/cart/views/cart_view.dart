@@ -32,7 +32,7 @@ class CartView extends GetView<CartController> {
             Get.offAndToNamed(Routes.HOME);
           },
         ),
-        title: const Text('Your Cart'),
+        title: const Text('Your Basket'),
         // actions: [
         //   IconButton(
         //     icon: Icon(Icons.home),

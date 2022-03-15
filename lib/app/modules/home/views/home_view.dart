@@ -182,7 +182,7 @@ class HomeView extends GetView<HomeController> {
                         color: theme.disabledColor,
                       ),
                       label: const Text(
-                        "Groceries",
+                        "Home",
                       ),
                       selectedIcon: Icon(
                         Icons.home_filled,

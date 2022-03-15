@@ -130,9 +130,10 @@ class FirebaseHelper {
             var listOfCartProducts = data['items'];
             for (var item in listOfCartProducts) {
               if (item['name'].toString() == product) {
-                print(item['name'].toString());
-                print(item['qty']);
-                modifyCart(cartproduct, item['qty'] + 1, item['qty']);
+                // print(item['name'].toString());
+                // print(item['qty']);
+                modifyCart(cartproduct, item['qty'] + cartproduct.quantity,
+                    item['qty']);
                 already_found = true;
                 existingQty = item['qty'] + cartproduct.quantity;
               }
@@ -164,7 +165,7 @@ class FirebaseHelper {
               'img': cartproduct.img
             }
           ]),
-          'amount': cartproduct.price,
+          'amount': (cartproduct.price! * quantity!),
         });
       } else {
         //THIS IS USED ONLY WHEN THERE IS PRODUCT INSIDE THE CART.
@@ -268,6 +269,18 @@ class FirebaseHelper {
     return true;
   }
 
+  Future<bool> clearCart() async {
+    var response = await _firestore
+        .collection('Users')
+        .doc(_auth.currentUser!.uid)
+        .collection('cart')
+        .doc(_auth.currentUser!.uid)
+        .set(<String, dynamic>{
+      'items': [],
+      'amount': 0,
+    });
+    return true;
+  }
   //
   // Future<bool> modifyCart(CartProduct cartproduct, int modifiedQuantity,int previousQuantity) async {
   //   try {
@@ -380,6 +393,7 @@ class FirebaseHelper {
         'img': cartProduct.img
       });
     }
+    // print(temp);
     try {
       await _firestore
           .collection('Users')
@@ -526,19 +540,6 @@ class FirebaseHelper {
     }
 
     return resultantProduct;
-  }
-
-  Future<bool> clearCart() async {
-    var response = await _firestore
-        .collection('Users')
-        .doc(_auth.currentUser!.uid)
-        .collection('cart')
-        .doc(_auth.currentUser!.uid)
-        .set(<String, dynamic>{
-      'items': [],
-      'amount': 0,
-    });
-    return true;
   }
 
   //for search by vegetables,fruits.

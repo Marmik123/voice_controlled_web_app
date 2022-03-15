@@ -22,6 +22,7 @@ void main() async {
 
   //Getting Viewport dimensions. (Assigning device height and width).
   SizeConfig.init();
+
   runApp(const MainApp());
 }
 
@@ -37,7 +38,10 @@ class MainApp extends StatelessWidget {
           return GetMaterialApp(
             title: "Voice Control",
             debugShowCheckedModeBanner: false,
-            initialRoute: Routes.SIGN_IN,
+            initialRoute: /*SharedPreference().getUserLoginStatus()
+                ? Routes.HOME
+                :*/
+                Routes.SIGN_IN,
             getPages: AppPages.routes,
             /*theme: ThemeData().copyWith(
               primaryColor: Colors.green,

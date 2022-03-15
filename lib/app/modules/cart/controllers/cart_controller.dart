@@ -6,6 +6,7 @@ import 'package:flutter_tts/flutter_tts_web.dart';
 import 'package:get/get.dart';
 import 'package:voicewebapp/app/data/remote/provider/models/cart.dart';
 import 'package:voicewebapp/app/data/remote/provider/models/cartProduct.dart';
+import 'package:voicewebapp/app/data/remote/provider/models/order.dart';
 import 'package:voicewebapp/app/data/remote/provider/models/product.dart';
 import 'package:voicewebapp/components/snack_bar.dart';
 import 'package:voicewebapp/controller/firebase_helper.dart';
@@ -29,6 +30,7 @@ class CartController extends GetxController {
   RxList<Product>? searchedProduct = <Product>[].obs;
   final count = 0.obs;
   Cart? cartDetails;
+  Map numbers = {'one': 1, 'two': 2, 'three': 3, 'four': 4, 'five': 5};
   //FLUTTER TEXT TO SPEECH.
   FlutterTts tts = FlutterTts();
   TtsState ttsState = TtsState.stopped;
@@ -138,7 +140,7 @@ class CartController extends GetxController {
     if (evaluatingCommand()) {
       tts.speak('Evaluating Command');
     }
-    List words = command.split('');
+    List words = command.toLowerCase().split(' ');
     if (words.contains('empty') || words.contains('clear')) {
       if (words.contains('cart') || words.contains('basket')) {
         isLoading(true);
@@ -153,6 +155,17 @@ class CartController extends GetxController {
         update();
       }
     } else if (words.contains('check') && words.contains('out')) {
+      await getCartDetails();
+      if (cartDetails != null && cartDetails!.products != []) {
+        await firebaseHelper.checkOut(cartDetails!, Address());
+        Get.back();
+        firebaseHelper.clearCart();
+        appSnackbar(
+            message: 'Order has been placed successfully',
+            snackbarState: SnackbarState.success);
+      } else {
+        appSnackbar(message: 'Cart is Empty');
+      }
     } else if (words.contains('remove')) {
       await getCartDetails();
       tts.speak('Removing item, please wait');
@@ -163,8 +176,136 @@ class CartController extends GetxController {
           update();
         }
       }
+    } else if (words.contains('modify') || words.contains('change')) {
+      await getCartDetails();
+      var cartProduct = null;
+      int quantity = -1;
+      for (var item in cartDetails!.products) {
+        print("REFERENCE PRODUCT LIST :${item.productName}");
+        if (words.contains(item.productName)) {
+          cartProduct = item;
+          print("PRODUCT IS :$cartProduct");
+          try {
+            String aStr = command.replaceAll(new RegExp(r'[^0-9]'), '');
+            quantity = int.parse(aStr);
+            tts.speak('ADD TO BASKET QUANTITY=$quantity successfully');
+            print('ADD TO BASKET QUANTITY=$quantity');
+          } catch (e) {
+            for (var num in numbers.keys) {
+              if (words.contains(num)) {
+                quantity = numbers[num];
+                print(quantity);
+              }
+            }
+          }
+        }
+      }
+
+      print("PRODUCT IS :$cartProduct");
+      if (cartProduct != null && quantity != -1) {
+        await firebaseHelper.modifyCart(
+            cartProduct, quantity, cartProduct.quantity!);
+        appSnackbar(
+            message:
+                '${cartProduct.productName} quantity successfully modified to $quantity in the cart');
+        update();
+      } else if (cartProduct == null) {
+        appSnackbar(message: 'No such item exist');
+      } else if (quantity == -1) {
+        appSnackbar(message: 'Modified quantity not mentioned');
+      }
+    } else if (words.contains('increase') && words.contains('by')) {
+      await getCartDetails();
+      var cartProduct;
+      int quantity = -1;
+      for (var item in cartDetails!.products) {
+        print("REFERENCE PRODUCT LIST :${item.productName}");
+        if (words.contains(item.productName)) {
+          cartProduct = item;
+          print("PRODUCT IS :$cartProduct");
+          try {
+            String aStr = command.replaceAll(new RegExp(r'[^0-9]'), '');
+            quantity = int.parse(aStr);
+            tts.speak('Modified quantity successfully');
+            print('ADD TO BASKET QUANTITY=$quantity');
+          } catch (e) {
+            for (var num in numbers.keys) {
+              if (words.contains(num)) {
+                quantity = numbers[num];
+                print(quantity);
+              }
+            }
+          }
+        }
+      }
+
+      print("PRODUCT IS :$cartProduct");
+      if (cartProduct != null &&
+          quantity != -1 &&
+          cartProduct.quantity! + quantity < 5) {
+        await firebaseHelper.modifyCart(cartProduct,
+            cartProduct.quantity! + quantity, cartProduct.quantity!);
+        appSnackbar(
+            message:
+                '${cartProduct.productName} quantity successfully modified to $quantity in the cart');
+        update();
+      } else if (cartProduct == null) {
+        appSnackbar(message: 'No such item exist in the cart');
+      } else if (quantity == -1) {
+        appSnackbar(message: ' quantity not mentioned');
+      } else if ((cartProduct.quantity! + quantity) > 5) {
+        appSnackbar(message: ' quantity cannot be greater than 5');
+      }
+    } else if (words.contains('decrease') && words.contains('by')) {
+      await getCartDetails();
+      var cartProduct = null;
+      int quantity = -1;
+      for (var item in cartDetails!.products) {
+        print("REFERENCE PRODUCT LIST :${item.productName}");
+        if (words.contains(item.productName)) {
+          cartProduct = item;
+          print("PRODUCT IS :$cartProduct");
+          try {
+            String aStr = command.replaceAll(new RegExp(r'[^0-9]'), '');
+            quantity = int.parse(aStr);
+            tts.speak('Modified quantity successfully');
+            print('ADD TO BASKET QUANTITY=$quantity');
+          } catch (e) {
+            for (var num in numbers.keys) {
+              if (words.contains(num)) {
+                quantity = numbers[num];
+                print(quantity);
+              }
+            }
+          }
+        }
+      }
+
+      print("PRODUCT IS :$cartProduct");
+      if (cartProduct != null &&
+          quantity != -1 &&
+          cartProduct.quantity! + quantity > -1) {
+        await firebaseHelper.modifyCart(cartProduct,
+            cartProduct.quantity! - quantity, cartProduct.quantity!);
+        tts.speak(
+            '${cartProduct.productName} quantity successfully modified to $quantity in the cart');
+        appSnackbar(
+            message:
+                '${cartProduct.productName} quantity successfully modified to $quantity in the cart');
+        update();
+      } else if (cartProduct == null) {
+        tts.speak('No such item exist in the cart');
+        appSnackbar(message: 'No such item exist in the cart');
+      } else if (quantity == -1) {
+        tts.speak('Modified quantity not mentioned');
+        appSnackbar(message: 'Modified quantity not mentioned');
+      } else if (cartProduct != null && cartProduct.quantity! + quantity < 0) {
+        tts.speak(' quantity cannot be less than 0');
+        appSnackbar(message: ' quantity cannot be less than 0');
+      }
     } else {
       tts.speak('Command not recognised, please try again');
+      appSnackbar(message: 'Command not recognized, Please try again');
     }
   }
 
